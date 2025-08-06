@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -54,7 +53,6 @@
           Preview will appear here.
         </div>
         <video id="videoPreview" class="w-full mt-4 rounded-md hidden" controls>
-          <!-- Video source will be set dynamically -->
           <source id="videoSource" src="" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
@@ -65,17 +63,29 @@
     </div>
   </div>
   <script>
-    // Placeholder functions for future logic
+    // Generate Preview by previewing the uploaded video or showing placeholder
     function generateVideo() {
-      // TODO: Implement video generation logic
-      // This would update videoPreview.src and toggle visibility
-    }
-    function downloadVideo() {
-      // TODO: Implement download logic if needed (the <a download> handles most cases)
-    }
-    // Attach event listeners (stub)
-    document.getElementById('generateBtn').addEventListener('click', generateVideo);
-    document.getElementById('downloadBtn').addEventListener('click', downloadVideo);
+      const videoInput = document.getElementById('videoInput');
+      const previewEl = document.getElementById('videoPreview');
+      const sourceEl = document.getElementById('videoSource');
+      const placeholder = document.getElementById('previewPlaceholder');
+      const downloadLink = document.getElementById('downloadBtn');if (videoInput.files && videoInput.files[0]) {
+    const fileURL = URL.createObjectURL(videoInput.files[0]);
+    sourceEl.src = fileURL;
+    previewEl.load();
+    previewEl.classList.remove('hidden');
+    placeholder.classList.add('hidden');
+    downloadLink.href = fileURL;
+    downloadLink.classList.remove('hidden');
+  } else {
+    alert('Please upload a video clip to preview.');
+  }
+}
+
+// Download is handled by the anchor 'download' attribute
+
+document.getElementById('generateBtn').addEventListener('click', generateVideo);
+
   </script>
 </body>
 </html>
