@@ -2,118 +2,80 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="google-site-verification" content="LFrbNrn-QMY0TYg3V0MrZ7Kn23s_XTx2z6gmq3urJFA" />
-  <title>Sv. Aadarsh Aaryan</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #111;
-      color: #fff;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .animated-name span {
-      display: inline-block;
-      animation: bounce 1s infinite, colorChange 5s linear infinite;
-      font-weight: bold;
-    }
-
-    .animated-name span:nth-child(even) {
-      animation-direction: reverse, normal;
-    }
-
-    @keyframes bounce {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-15px);
-      }
-    }
-
-    @keyframes colorChange {
-      0%    { color: #ff00c8; }
-      25%   { color: #00ffe1; }
-      50%   { color: #ffec00; }
-      75%   { color: #ff6600; }
-      100%  { color: #ff00c8; }
-    }
-
-    .photo-frame {
-      display: inline-block;
-      margin: 20px;
-      padding: 10px;
-      border: 8px solid;
-      border-image-slice: 1;
-      border-width: 6px;
-      border-image-source: linear-gradient(270deg, #ff00c8, #00ffe1, #ffec00);
-      animation: borderColorChange 5s linear infinite;
-      border-radius: 15px;
-    }
-
-    .photo-frame img {
-      width: 250px;
-      height: auto;
-      border-radius: 10px;
-    }
-
-    @keyframes borderColorChange {
-      0% {
-        border-image-source: linear-gradient(270deg, #ff00c8, #00ffe1, #ffec00);
-      }
-      50% {
-        border-image-source: linear-gradient(270deg, #00ffe1, #ffec00, #ff00c8);
-      }
-      100% {
-        border-image-source: linear-gradient(270deg, #ffec00, #ff00c8, #00ffe1);
-      }
-    }
-
-    .social-links {
-      margin-top: 30px;
-      font-size: 18px;
-    }
-
-    .social-links a {
-      color: #00ffe1;
-      text-decoration: none;
-      margin: 0 10px;
-    }
-
-    .social-links a:hover {
-      color: #ffec00;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Motivational Video Generator</title>
+  <!-- Include TailwindCSS via CDN with Forms plugin -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
 </head>
-<body>
-
-  <h1 class="animated-name">
-    <span>S</span><span>v</span><span>.</span>
-    <span> </span>
-    <span>A</span><span>a</span><span>d</span><span>a</span><span>r</span><span>s</span><span>h</span>
-    <span> </span>
-    <span>A</span><span>a</span><span>r</span><span>y</span><span>a</span><span>n</span>
-  </h1>
-
-  <div class="photo-frame">
-    <img src="https://res.cloudinary.com/cloudinary-tools-uploads/image/upload/o8infdfomxbgeofq8gaj.jpg" alt="Photo 1">
+<body class="bg-gray-50 min-h-screen">
+  <div class="max-w-4xl mx-auto p-6 space-y-8">
+    <h1 class="text-2xl font-bold text-center">Motivational Video Generator</h1>
+    <div class="flex flex-col md:flex-row gap-8">
+      <!-- Input panel -->
+      <div class="flex-1 space-y-6 bg-white p-6 rounded-lg shadow">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Describe the video scene:</label>
+          <textarea id="promptInput" rows="3" class="block w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Upload audio (optional):</label>
+          <input id="audioInput" type="file" accept="audio/*"
+                 class="block w-full mt-1 text-sm text-gray-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:border file:border-gray-300 file:rounded-md
+                        file:bg-white file:text-blue-700 hover:file:bg-gray-100" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Upload video clip (optional):</label>
+          <input id="videoInput" type="file" accept="video/*"
+                 class="block w-full mt-1 text-sm text-gray-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:border file:border-gray-300 file:rounded-md
+                        file:bg-white file:text-blue-700 hover:file:bg-gray-100" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Video style:</label>
+          <select id="styleSelect" class="block w-full mt-1 p-2 border border-gray-300 rounded-md">
+            <option>Motivational</option>
+            <option>Romantic</option>
+            <option>Emotional</option>
+            <option>Inspirational</option>
+          </select>
+        </div>
+        <div class="pt-4">
+          <button id="generateBtn" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
+            Generate Preview
+          </button>
+        </div>
+      </div>
+      <!-- Preview panel -->
+      <div class="flex-1 space-y-6 bg-white p-6 rounded-lg shadow flex flex-col items-center">
+        <div class="w-full text-center text-gray-500 italic" id="previewPlaceholder">
+          Preview will appear here.
+        </div>
+        <video id="videoPreview" class="w-full mt-4 rounded-md hidden" controls>
+          <!-- Video source will be set dynamically -->
+          <source id="videoSource" src="" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <a id="downloadBtn" href="#" download class="mt-4 inline-block bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors hidden">
+          Download Video
+        </a>
+      </div>
+    </div>
   </div>
-
-  <div class="photo-frame">
-    <img src="https://res.cloudinary.com/cloudinary-tools-uploads/image/upload/o8infdfomxbgeofq8gaj_2.jpg" alt="Photo 2">
-  </div>
-
-  <div class="social-links">
-    <p>📷 Instagram: 
-      <a href="https://instagram.com/aadarshaaryan.official" target="_blank">@aadarshaaryan.official</a> | 
-      <a href="https://instagram.com/timeandworld_" target="_blank">@timeandworld_</a>
-    </p>
-    <p>📺 YouTube: 
-      <a href="https://youtube.com/@svaadarshaaryan" target="_blank">@svaadarshaaryan</a>
-    </p>
-  </div>
-
+  <script>
+    // Placeholder functions for future logic
+    function generateVideo() {
+      // TODO: Implement video generation logic
+      // This would update videoPreview.src and toggle visibility
+    }
+    function downloadVideo() {
+      // TODO: Implement download logic if needed (the <a download> handles most cases)
+    }
+    // Attach event listeners (stub)
+    document.getElementById('generateBtn').addEventListener('click', generateVideo);
+    document.getElementById('downloadBtn').addEventListener('click', downloadVideo);
+  </script>
 </body>
 </html>
