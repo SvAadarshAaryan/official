@@ -2,101 +2,118 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>About Sv. Aadarsh Aaryan</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="google-site-verification" content="LFrbNrn-QMY0TYg3V0MrZ7Kn23s_XTx2z6gmq3urJFA" />
+  <title>Sv. Aadarsh Aaryan</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f8f9fa;
-      color: #333;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #111;
+      color: #fff;
+      text-align: center;
       padding: 20px;
-      max-width: 900px;
-      margin: auto;
     }
 
-    #about {
-      background: #ffffff;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .photo-wrapper {
+    .animated-name span {
       display: inline-block;
-      border-radius: 20px;
-      padding: 5px;
-      margin: 10px;
-      background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
-      background-size: 400% 400%;
-      animation: borderAnimate 6s ease infinite;
+      animation: bounce 1s infinite, colorChange 5s linear infinite;
+      font-weight: bold;
     }
 
-    @keyframes borderAnimate {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .animated-name span:nth-child(even) {
+      animation-direction: reverse, normal;
     }
 
-    .photo-wrapper img {
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+
+    @keyframes colorChange {
+      0%    { color: #ff00c8; }
+      25%   { color: #00ffe1; }
+      50%   { color: #ffec00; }
+      75%   { color: #ff6600; }
+      100%  { color: #ff00c8; }
+    }
+
+    .photo-frame {
+      display: inline-block;
+      margin: 20px;
+      padding: 10px;
+      border: 8px solid;
+      border-image-slice: 1;
+      border-width: 6px;
+      border-image-source: linear-gradient(270deg, #ff00c8, #00ffe1, #ffec00);
+      animation: borderColorChange 5s linear infinite;
       border-radius: 15px;
-      display: block;
-      width: 200px;
+    }
+
+    .photo-frame img {
+      width: 250px;
       height: auto;
+      border-radius: 10px;
     }
 
-    h2, h3 {
-      color: #222;
+    @keyframes borderColorChange {
+      0% {
+        border-image-source: linear-gradient(270deg, #ff00c8, #00ffe1, #ffec00);
+      }
+      50% {
+        border-image-source: linear-gradient(270deg, #00ffe1, #ffec00, #ff00c8);
+      }
+      100% {
+        border-image-source: linear-gradient(270deg, #ffec00, #ff00c8, #00ffe1);
+      }
     }
 
-    a {
-      color: #007BFF;
+    .social-links {
+      margin-top: 30px;
+      font-size: 18px;
+    }
+
+    .social-links a {
+      color: #00ffe1;
       text-decoration: none;
+      margin: 0 10px;
     }
 
-    a:hover {
-      text-decoration: underline;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
+    .social-links a:hover {
+      color: #ffec00;
     }
   </style>
 </head>
 <body>
 
-  <section id="about">
-    <div style="text-align: center;">
-      <div class="photo-wrapper">
-        <img src="https://drive.google.com/uc?id=1HmmwBKWzMvrLNntNUkaEFNsT_MyZ6-mI" alt="Photo 1">
-      </div>
-      <div class="photo-wrapper">
-        <img src="https://drive.google.com/uc?id=1IAW-7HRa0Cv8PUdPVsL6VFGtqTK0yH59" alt="Photo 2">
-      </div>
-    </div>
+  <h1 class="animated-name">
+    <span>S</span><span>v</span><span>.</span>
+    <span> </span>
+    <span>A</span><span>a</span><span>d</span><span>a</span><span>r</span><span>s</span><span>h</span>
+    <span> </span>
+    <span>A</span><span>a</span><span>r</span><span>y</span><span>a</span><span>n</span>
+  </h1>
 
-    <h2>👋 About Me</h2>
-    <p>
-      Hi! I'm <strong>Sv. Aadarsh Aaryan</strong>, a passionate <strong>Computer Science student</strong> with a deep interest in all areas of technology. I’ve recently completed my <strong>10th grade</strong> and am already exploring the vast world of programming, development, and digital creativity.
-    </p>
-    <p>
-      I’m on a journey to master <strong>all tech skills</strong> — from coding and web development to AI and beyond. I'm excited to learn, build, and share projects that solve real-world problems.
-    </p>
-    <p>
-      Beyond tech, I also create content online. I love sharing my thoughts, music, and creative works through social platforms.
-    </p>
+  <div class="photo-frame">
+    <img src="https://res.cloudinary.com/cloudinary-tools-uploads/image/upload/o8infdfomxbgeofq8gaj.jpg" alt="Photo 1">
+  </div>
 
-    <h3>📱 Let's Connect:</h3>
-    <ul>
-      <li>📷 Instagram: 
-        <a href="https://instagram.com/aadarshaaryan.official" target="_blank">@aadarshaaryan.official</a> |
-        <a href="https://instagram.com/timeandworld_" target="_blank">@timeandworld_</a>
-      </li>
-      <li>🎥 YouTube: 
-        <a href="https://www.youtube.com/@svaadarshaaryan" target="_blank">@svaadarshaaryan</a>
-      </li>
-    </ul>
-  </section>
+  <div class="photo-frame">
+    <img src="https://res.cloudinary.com/cloudinary-tools-uploads/image/upload/o8infdfomxbgeofq8gaj_2.jpg" alt="Photo 2">
+  </div>
+
+  <div class="social-links">
+    <p>📷 Instagram: 
+      <a href="https://instagram.com/aadarshaaryan.official" target="_blank">@aadarshaaryan.official</a> | 
+      <a href="https://instagram.com/timeandworld_" target="_blank">@timeandworld_</a>
+    </p>
+    <p>📺 YouTube: 
+      <a href="https://youtube.com/@svaadarshaaryan" target="_blank">@svaadarshaaryan</a>
+    </p>
+  </div>
 
 </body>
 </html>
