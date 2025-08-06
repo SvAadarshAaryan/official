@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Motivational Video Generator</title>
   <!-- Include TailwindCSS via CDN with Forms plugin -->
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
@@ -19,18 +19,12 @@
         <div>
           <label class="block text-sm font-medium text-gray-700">Upload audio (optional):</label>
           <input id="audioInput" type="file" accept="audio/*"
-                 class="block w-full mt-1 text-sm text-gray-500
-                        file:mr-4 file:py-2 file:px-4
-                        file:border file:border-gray-300 file:rounded-md
-                        file:bg-white file:text-blue-700 hover:file:bg-gray-100" />
+                 class="block w-full mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-md file:bg-white file:text-blue-700 hover:file:bg-gray-100" />
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700">Upload video clip (optional):</label>
           <input id="videoInput" type="file" accept="video/*"
-                 class="block w-full mt-1 text-sm text-gray-500
-                        file:mr-4 file:py-2 file:px-4
-                        file:border file:border-gray-300 file:rounded-md
-                        file:bg-white file:text-blue-700 hover:file:bg-gray-100" />
+                 class="block w-full mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-md file:bg-white file:text-blue-700 hover:file:bg-gray-100" />
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700">Video style:</label>
@@ -63,7 +57,7 @@
     </div>
   </div>
   <script>
-    // Generate Preview by previewing the uploaded video or showing placeholder
+    // Generate Preview by previewing the uploaded video
     function generateVideo() {
       const videoInput = document.getElementById('videoInput');
       const previewEl = document.getElementById('videoPreview');
@@ -81,8 +75,6 @@
     alert('Please upload a video clip to preview.');
   }
 }
-
-// Download is handled by the anchor 'download' attribute
 
 document.getElementById('generateBtn').addEventListener('click', generateVideo);
 
