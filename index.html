@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Dino Game Clone</title>
+  <title>Dino Game Clone - Enhanced</title>
   <style>
     * {
       margin: 0;
@@ -13,6 +13,7 @@
       background: #f7f7f7;
       font-family: Arial, sans-serif;
       overflow: hidden;
+      touch-action: manipulation;
     }
 
     #game {
@@ -76,33 +77,66 @@
       color: red;
       font-weight: bold;
     }
+
+    #restart-btn {
+      display: none;
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #222;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #restart-btn:hover {
+      background-color: #444;
+    }
   </style>
 </head>
 <body>
 
-  <div id="game">
+  <div id="game" onclick="mobileJump()">
     <div id="dino"></div>
     <div id="cactus"></div>
     <div id="score">Score: 0</div>
     <div id="game-over">GAME OVER</div>
+    <button id="restart-btn" onclick="restartGame()">Restart</button>
   </div>
+
+  <!-- Jump Sound -->
+  <audio id="jump-sound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
 
   <script>
     const dino = document.getElementById("dino");
     const cactus = document.getElementById("cactus");
     const scoreText = document.getElementById("score");
     const gameOverText = document.getElementById("game-over");
+    const restartBtn = document.getElementById("restart-btn");
+    const jumpSound = document.getElementById("jump-sound");
+
     let score = 0;
     let isAlive = true;
+    let scoreInterval;
+    let collisionCheck;
 
     function jump() {
       if (!dino.classList.contains("jump")) {
         dino.classList.add("jump");
-
+        jumpSound.currentTime = 0;
+        jumpSound.play();
         setTimeout(() => {
           dino.classList.remove("jump");
         }, 500);
       }
+    }
+
+    function mobileJump() {
+      if (isAlive) jump();
     }
 
     document.addEventListener("keydown", function (event) {
@@ -111,25 +145,42 @@
       }
     });
 
-    let scoreInterval = setInterval(() => {
-      if (isAlive) {
-        score++;
-        scoreText.textContent = "Score: " + score;
-      }
-    }, 200);
+    function startGame() {
+      score = 0;
+      isAlive = true;
+      cactus.style.animation = "moveCactus 2s linear infinite";
+      scoreInterval = setInterval(() => {
+        if (isAlive) {
+          score++;
+          scoreText.textContent = "Score: " + score;
+        }
+      }, 200);
 
-    let collisionCheck = setInterval(() => {
-      const dinoTop = parseInt(window.getComputedStyle(dino).getPropertyValue("top"));
-      const cactusLeft = parseInt(window.getComputedStyle(cactus).getPropertyValue("left"));
+      collisionCheck = setInterval(() => {
+        const dinoTop = parseInt(window.getComputedStyle(dino).getPropertyValue("top"));
+        const cactusLeft = parseInt(window.getComputedStyle(cactus).getPropertyValue("left"));
 
-      if (cactusLeft < 90 && cactusLeft > 50 && dinoTop >= 140) {
-        gameOverText.style.display = "block";
-        cactus.style.animation = "none";
-        cactus.style.left = cactusLeft + "px";
-        isAlive = false;
-        clearInterval(scoreInterval);
-      }
-    }, 10);
+        if (cactusLeft < 90 && cactusLeft > 50 && dinoTop >= 140) {
+          gameOverText.style.display = "block";
+          restartBtn.style.display = "block";
+          cactus.style.animation = "none";
+          cactus.style.left = cactusLeft + "px";
+          isAlive = false;
+          clearInterval(scoreInterval);
+          clearInterval(collisionCheck);
+        }
+      }, 10);
+    }
+
+    function restartGame() {
+      gameOverText.style.display = "none";
+      restartBtn.style.display = "none";
+      cactus.style.left = "100%";
+      scoreText.textContent = "Score: 0";
+      startGame();
+    }
+
+    startGame();
   </script>
 
 </body>
