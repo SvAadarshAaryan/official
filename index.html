@@ -1,59 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Random Background Color Generator</title>
+  <meta charset="UTF-8" />
+  <title>Dino Game Clone</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
     body {
+      background: #f7f7f7;
       font-family: Arial, sans-serif;
-      text-align: center;
-      padding-top: 100px;
-      transition: background-color 0.4s;
+      overflow: hidden;
     }
 
-    #color-code {
-      font-size: 2em;
-      margin: 20px 0;
+    #game {
+      width: 100%;
+      height: 200px;
+      border-bottom: 2px solid #333;
+      position: relative;
+      background-color: #fff;
+    }
+
+    #dino {
+      width: 40px;
+      height: 40px;
+      background-color: #333;
+      position: absolute;
+      bottom: 0;
+      left: 50px;
+    }
+
+    .jump {
+      animation: jump 0.5s ease-out;
+    }
+
+    @keyframes jump {
+      0%   { bottom: 0; }
+      50%  { bottom: 100px; }
+      100% { bottom: 0; }
+    }
+
+    #cactus {
+      width: 20px;
+      height: 40px;
+      background-color: green;
+      position: absolute;
+      bottom: 0;
+      left: 100%;
+      animation: moveCactus 2s linear infinite;
+    }
+
+    @keyframes moveCactus {
+      0% { left: 100%; }
+      100% { left: -20px; }
+    }
+
+    #score {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 18px;
       font-weight: bold;
+      color: #333;
     }
 
-    button {
-      font-size: 1.2em;
-      padding: 12px 25px;
-      cursor: pointer;
-      border: none;
-      border-radius: 8px;
-      background-color: #222;
-      color: #fff;
-      transition: background-color 0.3s;
-    }
-
-    button:hover {
-      background-color: #444;
+    #game-over {
+      display: none;
+      position: absolute;
+      top: 40%;
+      width: 100%;
+      text-align: center;
+      font-size: 30px;
+      color: red;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
-  <h1>Random Background Color Generator</h1>
-  <p id="color-code">#ffffff</p>
-  <button onclick="changeColor()">Change Background Color</button>
+  <div id="game">
+    <div id="dino"></div>
+    <div id="cactus"></div>
+    <div id="score">Score: 0</div>
+    <div id="game-over">GAME OVER</div>
+  </div>
 
   <script>
-    function getRandomColor() {
-      const letters = '0123456789ABCDEF';
-      let color = '#';
-      for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
+    const dino = document.getElementById("dino");
+    const cactus = document.getElementById("cactus");
+    const scoreText = document.getElementById("score");
+    const gameOverText = document.getElementById("game-over");
+    let score = 0;
+    let isAlive = true;
+
+    function jump() {
+      if (!dino.classList.contains("jump")) {
+        dino.classList.add("jump");
+
+        setTimeout(() => {
+          dino.classList.remove("jump");
+        }, 500);
       }
-      return color;
     }
 
-    function changeColor() {
-      const newColor = getRandomColor();
-      document.body.style.backgroundColor = newColor;
-      document.getElementById('color-code').textContent = newColor;
-    }
+    document.addEventListener("keydown", function (event) {
+      if (event.code === "Space" && isAlive) {
+        jump();
+      }
+    });
+
+    let scoreInterval = setInterval(() => {
+      if (isAlive) {
+        score++;
+        scoreText.textContent = "Score: " + score;
+      }
+    }, 200);
+
+    let collisionCheck = setInterval(() => {
+      const dinoTop = parseInt(window.getComputedStyle(dino).getPropertyValue("top"));
+      const cactusLeft = parseInt(window.getComputedStyle(cactus).getPropertyValue("left"));
+
+      if (cactusLeft < 90 && cactusLeft > 50 && dinoTop >= 140) {
+        gameOverText.style.display = "block";
+        cactus.style.animation = "none";
+        cactus.style.left = cactusLeft + "px";
+        isAlive = false;
+        clearInterval(scoreInterval);
+      }
+    }, 10);
   </script>
 
 </body>
