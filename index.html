@@ -6,151 +6,86 @@
   <title>Temple Run Game by Sv. Aadarsh Aaryan</title>
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      height: 100%;
+      margin: 0; padding: 0; overflow: hidden; height: 100%;
       background: linear-gradient(to top, #c94b4b, #4b134f);
       font-family: Arial, sans-serif;
     }
-    canvas {
-      display: block;
-      background: transparent;
-    }
+    canvas { display: block; background: transparent; }
   </style>
 </head>
 <body>
   <canvas id="gameCanvas"></canvas>
   <script>
-    if (!confirm("Temple Run Game by Sv. Aadarsh Aaryan\\n\\nInstructions:\\n- SPACE to jump (double jump supported)\\n- S to activate shield\\n- Avoid obstacles and collect coins\\n- Good luck!\\n\\nStart game?")) {
+    // Start prompt
+    if (!confirm(
+      "Temple Run Game by Sv. Aadarsh Aaryan\n\n" +
+      "Instructions:\n" +
+      "- SPACE to jump (double jump supported)\n" +
+      "- S to activate shield\n" +
+      "- Avoid obstacles and collect coins\n\n" +
+      "Start game?"
+    )) {
       alert("Game cancelled. Reload to try again!");
       throw new Error("Game not started");
     }
 
+    // Canvas setup
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
-
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
-
-    window.addEventListener('resize', () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
+    let W = window.innerWidth, H = window.innerHeight;
+    canvas.width = W; canvas.height = H;
+    window.addEventListener("resize", () => {
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = W; canvas.height = H;
     });
 
+    // Game state
     let player = {
-      x: 100,
-      y: height - 150,
-      width: 50,
-      height: 50,
-      color: "yellow",
-      velocityY: 0,
-      jumpCount: 0,
-      shield: false
+      x: 100, y: H - 150,
+      w: 50, h: 50,
+      vy: 0, jumps: 0, shield: false
     };
-
-    let gravity = 1.2;
-    let obstacles = [];
-    let coins = [];
-    let frame = 0;
-    let score = 0;
+    const gravity = 1.2;
+    let obstacles = [], coins = [];
+    let frame = 0, score = 0, speed = 5;
     let highScore = localStorage.getItem("templeHigh") || 0;
-    let speed = 5;
     let gameOver = false;
 
+    // Draw functions
     function drawPlayer() {
-      ctx.fillStyle = player.shield ? "cyan" : player.color;
-      ctx.fillRect(player.x, player.y, player.width, player.height);
+      ctx.fillStyle = player.shield ? "cyan" : "yellow";
+      ctx.fillRect(player.x, player.y, player.w, player.h);
     }
-
     function drawObstacles() {
       ctx.fillStyle = "red";
       obstacles.forEach(ob => {
-        ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
+        ctx.fillRect(ob.x, ob.y, ob.w, ob.h);
         ob.x -= speed;
       });
-      obstacles = obstacles.filter(ob => ob.x + ob.width > 0);
+      obstacles = obstacles.filter(ob => ob.x + ob.w > 0);
     }
-
     function drawCoins() {
       ctx.fillStyle = "gold";
-      coins.forEach(c => {
+      coins.forEach((c,i) => {
         ctx.beginPath();
-        ctx.arc(c.x, c.y, 10, 0, Math.PI * 2);
+        ctx.arc(c.x, c.y, 10, 0, 2*Math.PI);
         ctx.fill();
         c.x -= speed;
       });
       coins = coins.filter(c => c.x > 0);
     }
-
-    function spawnObstacle() {
-      let h = 50 + Math.random() * 50;
-      obstacles.push({
-        x: width,
-        y: height - h,
-        width: 30,
-        height: h
-      });
-    }
-
-    function spawnCoin() {
-      coins.push({
-        x: width,
-        y: height - 100 - Math.random() * 100
-      });
-    }
-
-    function handlePlayer() {
-      player.velocityY += gravity;
-      player.y += player.velocityY;
-
-      if (player.y + player.height > height - 10) {
-        player.y = height - player.height - 10;
-        player.jumpCount = 0;
-      }
-
-      // Collision detection
-      obstacles.forEach(ob => {
-        if (
-          player.x < ob.x + ob.width &&
-          player.x + player.width > ob.x &&
-          player.y < ob.y + ob.height &&
-          player.y + player.height > ob.y
-        ) {
-          if (!player.shield) gameOver = true;
-        }
-      });
-
-      coins.forEach((c, i) => {
-        let dx = player.x + player.width / 2 - c.x;
-        let dy = player.y + player.height / 2 - c.y;
-        if (Math.sqrt(dx * dx + dy * dy) < 30) {
-          coins.splice(i, 1);
-          score += 10;
-        }
-      });
-    }
-
     function drawBackground() {
-      // Parallax-style layers
       ctx.fillStyle = "#282c34";
-      ctx.fillRect(0, 0, width, height);
-
+      ctx.fillRect(0, 0, W, H);
       // Sun
       ctx.beginPath();
-      ctx.arc(width - 100, 100, 50, 0, Math.PI * 2);
+      ctx.arc(W - 100, 100, 50, 0, 2*Math.PI);
       ctx.fillStyle = "#ffce00";
       ctx.fill();
-
       // Horizon
       ctx.fillStyle = "#4a2fbd";
-      ctx.fillRect(0, height - 100, width, 20);
+      ctx.fillRect(0, H - 100, W, 20);
     }
-
     function drawText() {
       ctx.fillStyle = "white";
       ctx.font = "20px Arial";
@@ -158,52 +93,109 @@
       ctx.fillText("High: " + highScore, 20, 60);
     }
 
+    // Game logic
     function update() {
       if (gameOver) {
+        // Game Over screen
         ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, width, height);
+        ctx.fillRect(0,0,W,H);
         ctx.fillStyle = "white";
         ctx.font = "30px Arial";
-        ctx.fillText("Game Over!", width / 2 - 80, height / 2);
-        ctx.fillText("Score: " + score, width / 2 - 60, height / 2 + 40);
-        ctx.fillText("Refresh to play again", width / 2 - 120, height / 2 + 80);
-
+        ctx.fillText("Game Over!", W/2-80, H/2);
+        ctx.fillText("Score: " + score, W/2-60, H/2+40);
+        ctx.fillText("Refresh to play again", W/2-120, H/2+80);
+        // Save high score
         if (score > highScore) {
           localStorage.setItem("templeHigh", score);
         }
-
         return;
       }
 
-      ctx.clearRect(0, 0, width, height);
+      // Clear & redraw everything
+      ctx.clearRect(0,0,W,H);
       drawBackground();
-      drawCoins();
-      drawObstacles();
-      drawPlayer();
-      handlePlayer();
-      drawText();
 
+      // Spawn
       frame++;
       if (frame % 90 === 0) spawnObstacle();
       if (frame % 70 === 0) spawnCoin();
       if (frame % 600 === 0) speed += 0.5;
 
+      // Handle player physics
+      player.vy += gravity;
+      player.y += player.vy;
+      if (player.y + player.h > H - 10) {
+        player.y = H - player.h - 10;
+        player.jumps = 0;
+      }
+
+      // Collision and coin collection
+      obstacles.forEach(ob => {
+        if (
+          player.x < ob.x + ob.w &&
+          player.x + player.w > ob.x &&
+          player.y < ob.y + ob.h &&
+          player.y + player.h > ob.y
+        ) {
+          if (!player.shield) gameOver = true;
+        }
+      });
+      coins.forEach((c,i) => {
+        let dx = player.x + player.w/2 - c.x;
+        let dy = player.y + player.h/2 - c.y;
+        if (Math.hypot(dx,dy) < player.w/2 + 10) {
+          coins.splice(i,1);
+          score += 10;
+        }
+      });
+
+      // Draw game objects
+      drawObstacles();
+      drawCoins();
+      drawPlayer();
+      drawText();
+
       requestAnimationFrame(update);
     }
 
-    document.addEventListener("keydown", (e) => {
-      if (e.code === "Space") {
-        if (player.jumpCount < 2) {
-          player.velocityY = -15;
-          player.jumpCount++;
-        }
+    // Spawning helpers
+    function spawnObstacle() {
+      let h = 50 + Math.random()*50;
+      obstacles.push({
+        x: W,
+        y: H - h - 10,
+        w: 30, h: h
+      });
+    }
+    function spawnCoin() {
+      coins.push({
+        x: W,
+        y: H - 100 - Math.random()*100
+      });
+    }
+
+    // Input handling (fixed jump logic)
+    document.addEventListener("keydown", function(e) {
+      if ((e.code === "Space" || e.key === " ") && player.jumps < 2) {
+        player.vy = -15;
+        player.jumps++;
+        e.preventDefault();
       }
-      if (e.key === "s" || e.key === "S") {
+      if (e.key.toLowerCase() === "s") {
         player.shield = true;
         setTimeout(() => player.shield = false, 3000);
       }
     });
+    // Mobile tap to jump
+    canvas.addEventListener("touchstart", function(e) {
+      if (player.jumps < 2) {
+        player.vy = -15;
+        player.jumps++;
+      }
+      e.preventDefault();
+    });
 
+    // Start game loop
     update();
   </script>
 </body>
