@@ -1,83 +1,60 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Motivational Video Generator</title>
-  <!-- Include TailwindCSS via CDN with Forms plugin -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <title>Random Background Color Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 100px;
+      transition: background-color 0.4s;
+    }
+
+    #color-code {
+      font-size: 2em;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+
+    button {
+      font-size: 1.2em;
+      padding: 12px 25px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background-color: #222;
+      color: #fff;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #444;
+    }
+  </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-  <div class="max-w-4xl mx-auto p-6 space-y-8">
-    <h1 class="text-2xl font-bold text-center">Motivational Video Generator</h1>
-    <div class="flex flex-col md:flex-row gap-8">
-      <!-- Input panel -->
-      <div class="flex-1 space-y-6 bg-white p-6 rounded-lg shadow">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Describe the video scene:</label>
-          <textarea id="promptInput" rows="3" class="block w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Upload audio (optional):</label>
-          <input id="audioInput" type="file" accept="audio/*"
-                 class="block w-full mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-md file:bg-white file:text-blue-700 hover:file:bg-gray-100" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Upload video clip (optional):</label>
-          <input id="videoInput" type="file" accept="video/*"
-                 class="block w-full mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-md file:bg-white file:text-blue-700 hover:file:bg-gray-100" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Video style:</label>
-          <select id="styleSelect" class="block w-full mt-1 p-2 border border-gray-300 rounded-md">
-            <option>Motivational</option>
-            <option>Romantic</option>
-            <option>Emotional</option>
-            <option>Inspirational</option>
-          </select>
-        </div>
-        <div class="pt-4">
-          <button id="generateBtn" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
-            Generate Preview
-          </button>
-        </div>
-      </div>
-      <!-- Preview panel -->
-      <div class="flex-1 space-y-6 bg-white p-6 rounded-lg shadow flex flex-col items-center">
-        <div class="w-full text-center text-gray-500 italic" id="previewPlaceholder">
-          Preview will appear here.
-        </div>
-        <video id="videoPreview" class="w-full mt-4 rounded-md hidden" controls>
-          <source id="videoSource" src="" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <a id="downloadBtn" href="#" download class="mt-4 inline-block bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors hidden">
-          Download Video
-        </a>
-      </div>
-    </div>
-  </div>
+<body>
+
+  <h1>Random Background Color Generator</h1>
+  <p id="color-code">#ffffff</p>
+  <button onclick="changeColor()">Change Background Color</button>
+
   <script>
-    // Generate Preview by previewing the uploaded video
-    function generateVideo() {
-      const videoInput = document.getElementById('videoInput');
-      const previewEl = document.getElementById('videoPreview');
-      const sourceEl = document.getElementById('videoSource');
-      const placeholder = document.getElementById('previewPlaceholder');
-      const downloadLink = document.getElementById('downloadBtn');if (videoInput.files && videoInput.files[0]) {
-    const fileURL = URL.createObjectURL(videoInput.files[0]);
-    sourceEl.src = fileURL;
-    previewEl.load();
-    previewEl.classList.remove('hidden');
-    placeholder.classList.add('hidden');
-    downloadLink.href = fileURL;
-    downloadLink.classList.remove('hidden');
-  } else {
-    alert('Please upload a video clip to preview.');
-  }
-}
+    function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
 
-document.getElementById('generateBtn').addEventListener('click', generateVideo);
-
+    function changeColor() {
+      const newColor = getRandomColor();
+      document.body.style.backgroundColor = newColor;
+      document.getElementById('color-code').textContent = newColor;
+    }
   </script>
+
 </body>
 </html>
