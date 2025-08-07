@@ -1,187 +1,182 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Dino Game Clone - Enhanced</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Temple Run 2D - Advanced</title>
   <style>
-    * {
+    html, body {
       margin: 0;
       padding: 0;
-    }
-
-    body {
-      background: #f7f7f7;
-      font-family: Arial, sans-serif;
       overflow: hidden;
-      touch-action: manipulation;
+      font-family: 'Arial', sans-serif;
+      background: #333;
     }
-
-    #game {
-      width: 100%;
-      height: 200px;
-      border-bottom: 2px solid #333;
-      position: relative;
-      background-color: #fff;
-    }
-
-    #dino {
-      width: 40px;
-      height: 40px;
-      background-color: #333;
+    #gameCanvas {
       position: absolute;
-      bottom: 0;
-      left: 50px;
+      top: 0;
+      left: 0;
+      z-index: 1;
     }
-
-    .jump {
-      animation: jump 0.5s ease-out;
+    .parallax {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 100%;
+      background-repeat: repeat-x;
+      background-size: cover;
+      z-index: 0;
+      animation: scroll 60s linear infinite;
     }
-
-    @keyframes jump {
-      0%   { bottom: 0; }
-      50%  { bottom: 100px; }
-      100% { bottom: 0; }
+    .bg1 {
+      background-image: linear-gradient(to top, #2e8b57, #6b8e23);
+      z-index: -3;
+      animation-duration: 80s;
     }
-
-    #cactus {
-      width: 20px;
-      height: 40px;
-      background-color: green;
-      position: absolute;
-      bottom: 0;
-      left: 100%;
-      animation: moveCactus 2s linear infinite;
+    .bg2 {
+      background-image: linear-gradient(to top, rgba(0,0,0,0.2), rgba(0,0,0,0));
+      z-index: -2;
+      animation-duration: 40s;
     }
-
-    @keyframes moveCactus {
-      0% { left: 100%; }
-      100% { left: -20px; }
+    .bg3 {
+      background-image: url('data:image/svg+xml;utf8,<svg width="800" height="200" xmlns="http://www.w3.org/2000/svg"><rect width="800" height="200" fill="%23221010"/><circle cx="400" cy="100" r="50" fill="%23FFD700"/></svg>');
+      z-index: -1;
+      animation-duration: 20s;
     }
-
-    #score {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    #game-over {
-      display: none;
-      position: absolute;
-      top: 40%;
-      width: 100%;
-      text-align: center;
-      font-size: 30px;
-      color: red;
-      font-weight: bold;
-    }
-
-    #restart-btn {
-      display: none;
-      position: absolute;
-      top: 55%;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #222;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #restart-btn:hover {
-      background-color: #444;
+    @keyframes scroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
     }
   </style>
 </head>
 <body>
-
-  <div id="game" onclick="mobileJump()">
-    <div id="dino"></div>
-    <div id="cactus"></div>
-    <div id="score">Score: 0</div>
-    <div id="game-over">GAME OVER</div>
-    <button id="restart-btn" onclick="restartGame()">Restart</button>
-  </div>
-
-  <!-- Jump Sound -->
-  <audio id="jump-sound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+  <div class="parallax bg1"></div>
+  <div class="parallax bg2"></div>
+  <div class="parallax bg3"></div><canvas id="gameCanvas" width="800" height="400"></canvas>
 
   <script>
-    const dino = document.getElementById("dino");
-    const cactus = document.getElementById("cactus");
-    const scoreText = document.getElementById("score");
-    const gameOverText = document.getElementById("game-over");
-    const restartBtn = document.getElementById("restart-btn");
-    const jumpSound = document.getElementById("jump-sound");
-
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
     let score = 0;
-    let isAlive = true;
-    let scoreInterval;
-    let collisionCheck;
+    let speed = 5;
+    let player = { x: 50, y: 300, w: 40, h: 40, vy: 0, jumping: false, doubleJump: false, shield: false };
+    let gravity = 1.5;
+    let obstacles = [];
+    let coins = [];
+    let keys = {};
+    let highScore = localStorage.getItem("templeRunHighScore") || 0;
+    let gameRunning = false;
 
-    function jump() {
-      if (!dino.classList.contains("jump")) {
-        dino.classList.add("jump");
-        jumpSound.currentTime = 0;
-        jumpSound.play();
-        setTimeout(() => {
-          dino.classList.remove("jump");
-        }, 500);
+    function drawPlayer() {
+      ctx.fillStyle = player.shield ? "rgba(0,255,255,0.8)" : "#FFD700";
+      ctx.beginPath();
+      ctx.arc(player.x + player.w/2, player.y + player.h/2, player.w/2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawObstacles() {
+      ctx.fillStyle = "#8B0000";
+      obstacles.forEach(o => ctx.fillRect(o.x, o.y, o.w, o.h));
+    }
+
+    function drawCoins() {
+      ctx.fillStyle = "#FFFF00";
+      coins.forEach(c => ctx.beginPath(), ctx.arc(c.x, c.y, c.r, 0, Math.PI*2), ctx.fill());
+    }
+
+    function drawScore() {
+      ctx.fillStyle = "white";
+      ctx.font = "20px Arial";
+      ctx.fillText("Score: " + score, 10, 20);
+      ctx.fillText("High Score: " + highScore, 10, 40);
+    }
+
+    function update() {
+      player.y += player.vy;
+      player.vy += gravity;
+      if (player.y > 300) { player.y = 300; player.vy = 0; player.jumping = false; player.doubleJump = false; }
+
+      obstacles.forEach(o => o.x -= speed);
+      coins.forEach(c => c.x -= speed);
+      obstacles = obstacles.filter(o => o.x + o.w > 0);
+      coins = coins.filter(c => c.x + c.r > 0);
+
+      if (Math.random() < 0.02) {
+        obstacles.push({ x: 800, y: 320, w: 30, h: 40 });
       }
+      if (Math.random() < 0.01) {
+        coins.push({ x: 800, y: 250, r: 10 });
+      }
+
+      obstacles.forEach(o => {
+        if (player.x < o.x + o.w && player.x + player.w > o.x && player.y < o.y + o.h && player.y + player.h > o.y) {
+          if (!player.shield) {
+            gameOver();
+          } else {
+            player.shield = false;
+          }
+        }
+      });
+
+      coins.forEach((c, i) => {
+        let dx = player.x + player.w/2 - c.x;
+        let dy = player.y + player.h/2 - c.y;
+        if (Math.sqrt(dx*dx + dy*dy) < c.r + player.w/2) {
+          coins.splice(i, 1);
+          score += 10;
+        }
+      });
+
+      score++;
+      if (score % 500 === 0) speed += 0.5;
     }
 
-    function mobileJump() {
-      if (isAlive) jump();
+    function gameOver() {
+      gameRunning = false;
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("templeRunHighScore", highScore);
+      }
+      alert("Game Over! Score: " + score);
+      location.reload();
     }
 
-    document.addEventListener("keydown", function (event) {
-      if (event.code === "Space" && isAlive) {
-        jump();
+    function loop() {
+      if (!gameRunning) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      update();
+      drawPlayer();
+      drawObstacles();
+      drawCoins();
+      drawScore();
+      requestAnimationFrame(loop);
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.code === "Space") {
+        if (!player.jumping) {
+          player.vy = -15;
+          player.jumping = true;
+        } else if (!player.doubleJump) {
+          player.vy = -12;
+          player.doubleJump = true;
+        }
+      }
+      if (e.code === "KeyS") {
+        player.shield = true;
+        setTimeout(() => player.shield = false, 3000);
       }
     });
 
     function startGame() {
-      score = 0;
-      isAlive = true;
-      cactus.style.animation = "moveCactus 2s linear infinite";
-      scoreInterval = setInterval(() => {
-        if (isAlive) {
-          score++;
-          scoreText.textContent = "Score: " + score;
-        }
-      }, 200);
-
-      collisionCheck = setInterval(() => {
-        const dinoTop = parseInt(window.getComputedStyle(dino).getPropertyValue("top"));
-        const cactusLeft = parseInt(window.getComputedStyle(cactus).getPropertyValue("left"));
-
-        if (cactusLeft < 90 && cactusLeft > 50 && dinoTop >= 140) {
-          gameOverText.style.display = "block";
-          restartBtn.style.display = "block";
-          cactus.style.animation = "none";
-          cactus.style.left = cactusLeft + "px";
-          isAlive = false;
-          clearInterval(scoreInterval);
-          clearInterval(collisionCheck);
-        }
-      }, 10);
+      gameRunning = true;
+      loop();
     }
 
-    function restartGame() {
-      gameOverText.style.display = "none";
-      restartBtn.style.display = "none";
-      cactus.style.left = "100%";
-      scoreText.textContent = "Score: 0";
-      startGame();
-    }
-
-    startGame();
-  </script>
-
-</body>
+    window.onload = () => {
+      if (confirm("Temple Run Game\n\nInstructions:\n- Space: Jump\n- Press again to Double Jump\n- S: Activate Shield\n\nStart game?")) {
+        startGame();
+      }
+    };
+  </script></body>
 </html>
