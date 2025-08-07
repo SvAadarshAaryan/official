@@ -1,182 +1,210 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Temple Run 2D - Advanced</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Temple Run Game by Sv. Aadarsh Aaryan</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       overflow: hidden;
-      font-family: 'Arial', sans-serif;
-      background: #333;
-    }
-    #gameCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;
-    }
-    .parallax {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 200%;
       height: 100%;
-      background-repeat: repeat-x;
-      background-size: cover;
-      z-index: 0;
-      animation: scroll 60s linear infinite;
+      background: linear-gradient(to top, #c94b4b, #4b134f);
+      font-family: Arial, sans-serif;
     }
-    .bg1 {
-      background-image: linear-gradient(to top, #2e8b57, #6b8e23);
-      z-index: -3;
-      animation-duration: 80s;
-    }
-    .bg2 {
-      background-image: linear-gradient(to top, rgba(0,0,0,0.2), rgba(0,0,0,0));
-      z-index: -2;
-      animation-duration: 40s;
-    }
-    .bg3 {
-      background-image: url('data:image/svg+xml;utf8,<svg width="800" height="200" xmlns="http://www.w3.org/2000/svg"><rect width="800" height="200" fill="%23221010"/><circle cx="400" cy="100" r="50" fill="%23FFD700"/></svg>');
-      z-index: -1;
-      animation-duration: 20s;
-    }
-    @keyframes scroll {
-      from { transform: translateX(0); }
-      to { transform: translateX(-50%); }
+    canvas {
+      display: block;
+      background: transparent;
     }
   </style>
 </head>
 <body>
-  <div class="parallax bg1"></div>
-  <div class="parallax bg2"></div>
-  <div class="parallax bg3"></div><canvas id="gameCanvas" width="800" height="400"></canvas>
-
+  <canvas id="gameCanvas"></canvas>
   <script>
+    if (!confirm("Temple Run Game by Sv. Aadarsh Aaryan\\n\\nInstructions:\\n- SPACE to jump (double jump supported)\\n- S to activate shield\\n- Avoid obstacles and collect coins\\n- Good luck!\\n\\nStart game?")) {
+      alert("Game cancelled. Reload to try again!");
+      throw new Error("Game not started");
+    }
+
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
-    let score = 0;
-    let speed = 5;
-    let player = { x: 50, y: 300, w: 40, h: 40, vy: 0, jumping: false, doubleJump: false, shield: false };
-    let gravity = 1.5;
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    window.addEventListener('resize', () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    });
+
+    let player = {
+      x: 100,
+      y: height - 150,
+      width: 50,
+      height: 50,
+      color: "yellow",
+      velocityY: 0,
+      jumpCount: 0,
+      shield: false
+    };
+
+    let gravity = 1.2;
     let obstacles = [];
     let coins = [];
-    let keys = {};
-    let highScore = localStorage.getItem("templeRunHighScore") || 0;
-    let gameRunning = false;
+    let frame = 0;
+    let score = 0;
+    let highScore = localStorage.getItem("templeHigh") || 0;
+    let speed = 5;
+    let gameOver = false;
 
     function drawPlayer() {
-      ctx.fillStyle = player.shield ? "rgba(0,255,255,0.8)" : "#FFD700";
-      ctx.beginPath();
-      ctx.arc(player.x + player.w/2, player.y + player.h/2, player.w/2, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillStyle = player.shield ? "cyan" : player.color;
+      ctx.fillRect(player.x, player.y, player.width, player.height);
     }
 
     function drawObstacles() {
-      ctx.fillStyle = "#8B0000";
-      obstacles.forEach(o => ctx.fillRect(o.x, o.y, o.w, o.h));
+      ctx.fillStyle = "red";
+      obstacles.forEach(ob => {
+        ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
+        ob.x -= speed;
+      });
+      obstacles = obstacles.filter(ob => ob.x + ob.width > 0);
     }
 
     function drawCoins() {
-      ctx.fillStyle = "#FFFF00";
-      coins.forEach(c => ctx.beginPath(), ctx.arc(c.x, c.y, c.r, 0, Math.PI*2), ctx.fill());
+      ctx.fillStyle = "gold";
+      coins.forEach(c => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, 10, 0, Math.PI * 2);
+        ctx.fill();
+        c.x -= speed;
+      });
+      coins = coins.filter(c => c.x > 0);
     }
 
-    function drawScore() {
-      ctx.fillStyle = "white";
-      ctx.font = "20px Arial";
-      ctx.fillText("Score: " + score, 10, 20);
-      ctx.fillText("High Score: " + highScore, 10, 40);
+    function spawnObstacle() {
+      let h = 50 + Math.random() * 50;
+      obstacles.push({
+        x: width,
+        y: height - h,
+        width: 30,
+        height: h
+      });
     }
 
-    function update() {
-      player.y += player.vy;
-      player.vy += gravity;
-      if (player.y > 300) { player.y = 300; player.vy = 0; player.jumping = false; player.doubleJump = false; }
+    function spawnCoin() {
+      coins.push({
+        x: width,
+        y: height - 100 - Math.random() * 100
+      });
+    }
 
-      obstacles.forEach(o => o.x -= speed);
-      coins.forEach(c => c.x -= speed);
-      obstacles = obstacles.filter(o => o.x + o.w > 0);
-      coins = coins.filter(c => c.x + c.r > 0);
+    function handlePlayer() {
+      player.velocityY += gravity;
+      player.y += player.velocityY;
 
-      if (Math.random() < 0.02) {
-        obstacles.push({ x: 800, y: 320, w: 30, h: 40 });
+      if (player.y + player.height > height - 10) {
+        player.y = height - player.height - 10;
+        player.jumpCount = 0;
       }
-      if (Math.random() < 0.01) {
-        coins.push({ x: 800, y: 250, r: 10 });
-      }
 
-      obstacles.forEach(o => {
-        if (player.x < o.x + o.w && player.x + player.w > o.x && player.y < o.y + o.h && player.y + player.h > o.y) {
-          if (!player.shield) {
-            gameOver();
-          } else {
-            player.shield = false;
-          }
+      // Collision detection
+      obstacles.forEach(ob => {
+        if (
+          player.x < ob.x + ob.width &&
+          player.x + player.width > ob.x &&
+          player.y < ob.y + ob.height &&
+          player.y + player.height > ob.y
+        ) {
+          if (!player.shield) gameOver = true;
         }
       });
 
       coins.forEach((c, i) => {
-        let dx = player.x + player.w/2 - c.x;
-        let dy = player.y + player.h/2 - c.y;
-        if (Math.sqrt(dx*dx + dy*dy) < c.r + player.w/2) {
+        let dx = player.x + player.width / 2 - c.x;
+        let dy = player.y + player.height / 2 - c.y;
+        if (Math.sqrt(dx * dx + dy * dy) < 30) {
           coins.splice(i, 1);
           score += 10;
         }
       });
-
-      score++;
-      if (score % 500 === 0) speed += 0.5;
     }
 
-    function gameOver() {
-      gameRunning = false;
-      if (score > highScore) {
-        highScore = score;
-        localStorage.setItem("templeRunHighScore", highScore);
+    function drawBackground() {
+      // Parallax-style layers
+      ctx.fillStyle = "#282c34";
+      ctx.fillRect(0, 0, width, height);
+
+      // Sun
+      ctx.beginPath();
+      ctx.arc(width - 100, 100, 50, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffce00";
+      ctx.fill();
+
+      // Horizon
+      ctx.fillStyle = "#4a2fbd";
+      ctx.fillRect(0, height - 100, width, 20);
+    }
+
+    function drawText() {
+      ctx.fillStyle = "white";
+      ctx.font = "20px Arial";
+      ctx.fillText("Score: " + score, 20, 30);
+      ctx.fillText("High: " + highScore, 20, 60);
+    }
+
+    function update() {
+      if (gameOver) {
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, width, height);
+        ctx.fillStyle = "white";
+        ctx.font = "30px Arial";
+        ctx.fillText("Game Over!", width / 2 - 80, height / 2);
+        ctx.fillText("Score: " + score, width / 2 - 60, height / 2 + 40);
+        ctx.fillText("Refresh to play again", width / 2 - 120, height / 2 + 80);
+
+        if (score > highScore) {
+          localStorage.setItem("templeHigh", score);
+        }
+
+        return;
       }
-      alert("Game Over! Score: " + score);
-      location.reload();
-    }
 
-    function loop() {
-      if (!gameRunning) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      update();
-      drawPlayer();
-      drawObstacles();
+      ctx.clearRect(0, 0, width, height);
+      drawBackground();
       drawCoins();
-      drawScore();
-      requestAnimationFrame(loop);
+      drawObstacles();
+      drawPlayer();
+      handlePlayer();
+      drawText();
+
+      frame++;
+      if (frame % 90 === 0) spawnObstacle();
+      if (frame % 70 === 0) spawnCoin();
+      if (frame % 600 === 0) speed += 0.5;
+
+      requestAnimationFrame(update);
     }
 
-    document.addEventListener("keydown", e => {
+    document.addEventListener("keydown", (e) => {
       if (e.code === "Space") {
-        if (!player.jumping) {
-          player.vy = -15;
-          player.jumping = true;
-        } else if (!player.doubleJump) {
-          player.vy = -12;
-          player.doubleJump = true;
+        if (player.jumpCount < 2) {
+          player.velocityY = -15;
+          player.jumpCount++;
         }
       }
-      if (e.code === "KeyS") {
+      if (e.key === "s" || e.key === "S") {
         player.shield = true;
         setTimeout(() => player.shield = false, 3000);
       }
     });
 
-    function startGame() {
-      gameRunning = true;
-      loop();
-    }
-
-    window.onload = () => {
-      if (confirm("Temple Run Game\n\nInstructions:\n- Space: Jump\n- Press again to Double Jump\n- S: Activate Shield\n\nStart game?")) {
-        startGame();
-      }
-    };
-  </script></body>
+    update();
+  </script>
+</body>
 </html>
