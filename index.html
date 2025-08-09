@@ -1,1161 +1,980 @@
-<!-- Created by Sv. Aadarsh Aaryan-->
-
-
-<!--
- It took me a month to totally design and make everything work properly i left it a few times that it cannot be completed but fixed all of them finally today
-
-Im planning make the bot play like a beast in John Wick mode in my next project i'll try to make a intelligent algorithm for bot that will hunt everypiece making it difficult for the player to win
-
-Your 1 upvote will give me soo much confidence 🔥🔥🔥
-
-NEW RULE (Added on 4th August 2025) ::: -+>
-
-You cannot go to the redhome without killing the opponent atleast once but the bot has the power to go as it is weaker than you 
-
-You can choose to apply this rule or not by clicking 'OK' or 'Cancel'<+-
-<a href="https://www.instagram.com/aadarshaaryan.official">
- <a href="https://www.instagram.com/aadarshaaryan.official">
-  Get connected with me on Instagram
-</a>
-
-
--->
-
-
+<!--This game is created by <b>Sv. Aadarsh Aaryan</b><br><a href="https://www.instagram.com/aadarshaaryan.official/</a>-->
 
 
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Ludo by Sv. Aadarsh Aaryan</title>
-        
-        
-    </head>
-    <body>
-    
-    <div class="dice">
-        <div class="mydice"> </div>
-    </div>
-    
-    
-    
-        <div class="game">
-    <div class="house green greenhouse">
-        <div class="box">
-            <div class="square square-one green">
-                
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Adventure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #2c1810, #4a2c18);
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        canvas {
+            background: linear-gradient(45deg, #1a4a1a, #2d5a2d);
+            flex: 1;
+            display: block;
+        }
+
+        .ui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 10;
+        }
+
+        .mobile-controls {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            height: 120px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 20px;
+            pointer-events: none;
+        }
+
+        .dpad {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            pointer-events: all;
+        }
+
+        .dpad-button {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.1s;
+            user-select: none;
+        }
+
+        .dpad-button:active {
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0.95);
+        }
+
+        .dpad-up { top: 0; left: 40px; }
+        .dpad-down { bottom: 0; left: 40px; }
+        .dpad-left { top: 40px; left: 0; }
+        .dpad-right { top: 40px; right: 0; }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            pointer-events: all;
+        }
+
+        .action-button {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 100, 100, 0.3);
+            border: 2px solid rgba(255, 100, 100, 0.7);
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-button:active {
+            background: rgba(255, 100, 100, 0.7);
+            transform: scale(0.95);
+        }
+
+        .inventory {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #8B4513;
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            display: none;
+            z-index: 20;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .inventory h3 {
+            margin-bottom: 15px;
+            color: #FFD700;
+            text-align: center;
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .inventory-slot {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #8B4513;
+            background: rgba(139, 69, 19, 0.2);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .close-btn {
+            background: #8B4513;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .message {
+            position: absolute;
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            display: none;
+            z-index: 15;
+            max-width: 300px;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .mobile-controls {
+                display: none;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .ui {
+                font-size: 12px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="ui">
+            <div>Level: <span id="level">1</span></div>
+            <div>HP: <span id="hp">100</span>/<span id="maxHp">100</span></div>
+            <div>XP: <span id="xp">0</span>/<span id="xpNext">100</span></div>
+            <div>Gold: <span id="gold">0</span></div>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div class="mobile-controls">
+            <div class="dpad">
+                <div class="dpad-button dpad-up" data-key="ArrowUp">↑</div>
+                <div class="dpad-button dpad-down" data-key="ArrowDown">↓</div>
+                <div class="dpad-button dpad-left" data-key="ArrowLeft">←</div>
+                <div class="dpad-button dpad-right" data-key="ArrowRight">→</div>
             </div>
-            <div class="square square-two green">
-                
-               
-            </div>
-            <div class="square square-three green">
-                
-                
-            </div>
-            <div class="square square-four green">
-                
-                
+            <div class="action-buttons">
+                <div class="action-button" data-key="KeyX">ATK</div>
+                <div class="action-button" data-key="KeyI">INV</div>
             </div>
         </div>
-    </div>
 
-    <div class="house yellow yellowhouse" style="right: 0">
-        <div class="box">
-            <div class="square square-one yellow" id="yellowrestart1" >
-                
-                <svg class="yellowpiece" id="yellow1"
-    version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    x="0%" y="0%"
-    width="100%" height="100%"
-    viewBox="0 0 24.0 24.0"
-    enable-background="new 0 0 24.0 24.0"
-    xml:space="preserve">
-<defs>
-    <linearGradient id="stkGrad1" x1="-3.107%" y1="49.865%" x2="100.605%" y2="50.091%">
-           <stop offset="0.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.078%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.915%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.308%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.397%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="24.482%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="23.852%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.406%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.673%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="40.151%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="39.950%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="47.912%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="48.169%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.636%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.896%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.504%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.484%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.505%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.453%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.398%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.685%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.747%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.677%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.395%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.665%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="100.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-    </linearGradient>
-
-</defs>
-    <path
-        fill="#FFFFFF"
-        stroke="#682400"
-        fill-opacity="0.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="1.0240875"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,12.38C14.95,12.38,17.21,14.53,17.21,17.19C17.21,19.84,14.95,21.99,12.15,21.99C9.35,21.99,7.09,19.84,7.09,17.19C7.09,14.53,9.35,12.38,12.15,12.38z"/>
-    <path class="pieceready" id="yellow1ready"
-        transform = "rotate(-0.00 12.15 17.19)"
-        fill="#FFFFFF"
-        stroke="url(#stkGrad1)"
-        fill-opacity="0.000"
-        stroke-opacity="1.0"
-        fill-rule="nonzero"
-        stroke-width="0.71999997"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,11.55C15.26,11.55,17.79,14.07,17.79,17.19C17.79,20.30,15.26,22.82,12.15,22.82C9.04,22.82,6.51,20.30,6.51,17.19C6.51,14.07,9.04,11.55,12.15,11.55z"/>
-    <path
-        fill="#FFFFFF"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,17.19C9.33,14.13,6.17,10.31,6.01,6.69C6.01,-1.10,18.15,-1.10,18.11,6.65C17.96,10.00,15.12,14.17,12.15,17.19z"/>
-    <path
-        fill="#ffe01b"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M11.92,2.70C14.17,2.70,15.99,4.52,15.99,6.77C15.99,9.02,14.17,10.85,11.92,10.85C9.67,10.85,7.85,9.02,7.85,6.77C7.85,4.52,9.67,2.70,11.92,2.70z"/>
-</svg>
-                
-                
-                
-                
-            </div>
-            <div class="square square-two yellow" id="yellowrestart2" >
-                
-                <svg class="yellowpiece" id="yellow2"
-    version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    x="0%" y="0%"
-    width="100%" height="100%"
-    viewBox="0 0 24.0 24.0"
-    enable-background="new 0 0 24.0 24.0"
-    xml:space="preserve">
-<defs>
-    <linearGradient id="stkGrad1" x1="-3.107%" y1="49.865%" x2="100.605%" y2="50.091%">
-           <stop offset="0.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.078%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.915%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.308%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.397%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="24.482%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="23.852%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.406%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.673%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="40.151%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="39.950%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="47.912%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="48.169%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.636%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.896%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.504%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.484%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.505%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.453%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.398%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.685%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.747%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.677%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.395%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.665%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="100.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-    </linearGradient>
-
-</defs>
-    <path
-        fill="#FFFFFF"
-        stroke="#682400"
-        fill-opacity="0.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="1.0240875"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,12.38C14.95,12.38,17.21,14.53,17.21,17.19C17.21,19.84,14.95,21.99,12.15,21.99C9.35,21.99,7.09,19.84,7.09,17.19C7.09,14.53,9.35,12.38,12.15,12.38z"/>
-    <path class="pieceready" id="yellow2ready"
-        transform = "rotate(-0.00 12.15 17.19)"
-        fill="#FFFFFF"
-        stroke="url(#stkGrad1)"
-        fill-opacity="0.000"
-        stroke-opacity="1.0"
-        fill-rule="nonzero"
-        stroke-width="0.71999997"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,11.55C15.26,11.55,17.79,14.07,17.79,17.19C17.79,20.30,15.26,22.82,12.15,22.82C9.04,22.82,6.51,20.30,6.51,17.19C6.51,14.07,9.04,11.55,12.15,11.55z"/>
-    <path
-        fill="#FFFFFF"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,17.19C9.33,14.13,6.17,10.31,6.01,6.69C6.01,-1.10,18.15,-1.10,18.11,6.65C17.96,10.00,15.12,14.17,12.15,17.19z"/>
-    <path
-        fill="#ffe01b"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M11.92,2.70C14.17,2.70,15.99,4.52,15.99,6.77C15.99,9.02,14.17,10.85,11.92,10.85C9.67,10.85,7.85,9.02,7.85,6.77C7.85,4.52,9.67,2.70,11.92,2.70z"/>
-</svg>
-                
-                
-            </div>
-            <div class="square square-three yellow" id="yellowrestart3" >
-                
-                <svg class="yellowpiece" id="yellow3"
-    version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    x="0%" y="0%"
-    width="100%" height="100%"
-    viewBox="0 0 24.0 24.0"
-    enable-background="new 0 0 24.0 24.0"
-    xml:space="preserve">
-<defs>
-    <linearGradient id="stkGrad1" x1="-3.107%" y1="49.865%" x2="100.605%" y2="50.091%">
-           <stop offset="0.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.078%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.915%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.308%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.397%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="24.482%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="23.852%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.406%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.673%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="40.151%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="39.950%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="47.912%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="48.169%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.636%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.896%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.504%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.484%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.505%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.453%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.398%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.685%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.747%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.677%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.395%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.665%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="100.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-    </linearGradient>
-
-</defs>
-    <path
-        fill="#FFFFFF"
-        stroke="#682400"
-        fill-opacity="0.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="1.0240875"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,12.38C14.95,12.38,17.21,14.53,17.21,17.19C17.21,19.84,14.95,21.99,12.15,21.99C9.35,21.99,7.09,19.84,7.09,17.19C7.09,14.53,9.35,12.38,12.15,12.38z"/>
-    <path class="pieceready" id="yellow3ready"
-        transform = "rotate(-0.00 12.15 17.19)"
-        fill="#FFFFFF"
-        stroke="url(#stkGrad1)"
-        fill-opacity="0.000"
-        stroke-opacity="1.0"
-        fill-rule="nonzero"
-        stroke-width="0.71999997"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,11.55C15.26,11.55,17.79,14.07,17.79,17.19C17.79,20.30,15.26,22.82,12.15,22.82C9.04,22.82,6.51,20.30,6.51,17.19C6.51,14.07,9.04,11.55,12.15,11.55z"/>
-    <path
-        fill="#FFFFFF"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,17.19C9.33,14.13,6.17,10.31,6.01,6.69C6.01,-1.10,18.15,-1.10,18.11,6.65C17.96,10.00,15.12,14.17,12.15,17.19z"/>
-    <path
-        fill="#ffe01b"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M11.92,2.70C14.17,2.70,15.99,4.52,15.99,6.77C15.99,9.02,14.17,10.85,11.92,10.85C9.67,10.85,7.85,9.02,7.85,6.77C7.85,4.52,9.67,2.70,11.92,2.70z"/>
-</svg>
-                
-                
-            </div>
-            <div class="square square-four yellow" id="yellowrestart4">
-                
-                
-                <svg class="yellowpiece" id="yellow4"
-    version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    x="0%" y="0%"
-    width="100%" height="100%"
-    viewBox="0 0 24.0 24.0"
-    enable-background="new 0 0 24.0 24.0"
-    xml:space="preserve">
-<defs>
-    <linearGradient id="stkGrad1" x1="-3.107%" y1="49.865%" x2="100.605%" y2="50.091%">
-           <stop offset="0.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.078%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.915%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.308%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.397%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="24.482%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="23.852%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.406%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.673%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="40.151%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="39.950%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="47.912%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="48.169%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.636%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.896%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.504%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.484%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.505%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.453%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.398%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.685%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.747%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.677%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.395%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.665%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="100.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-    </linearGradient>
-
-</defs>
-    <path
-        fill="#FFFFFF"
-        stroke="#682400"
-        fill-opacity="0.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="1.0240875"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,12.38C14.95,12.38,17.21,14.53,17.21,17.19C17.21,19.84,14.95,21.99,12.15,21.99C9.35,21.99,7.09,19.84,7.09,17.19C7.09,14.53,9.35,12.38,12.15,12.38z"/>
-    <path class="pieceready" id="yellow4ready"
-        transform = "rotate(-0.00 12.15 17.19)"
-        fill="#FFFFFF"
-        stroke="url(#stkGrad1)"
-        fill-opacity="0.000"
-        stroke-opacity="1.0"
-        fill-rule="nonzero"
-        stroke-width="0.71999997"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,11.55C15.26,11.55,17.79,14.07,17.79,17.19C17.79,20.30,15.26,22.82,12.15,22.82C9.04,22.82,6.51,20.30,6.51,17.19C6.51,14.07,9.04,11.55,12.15,11.55z"/>
-    <path
-        fill="#FFFFFF"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,17.19C9.33,14.13,6.17,10.31,6.01,6.69C6.01,-1.10,18.15,-1.10,18.11,6.65C17.96,10.00,15.12,14.17,12.15,17.19z"/>
-    <path
-        fill="#ffe01b"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M11.92,2.70C14.17,2.70,15.99,4.52,15.99,6.77C15.99,9.02,14.17,10.85,11.92,10.85C9.67,10.85,7.85,9.02,7.85,6.77C7.85,4.52,9.67,2.70,11.92,2.70z"/>
-</svg>
-                
-            </div>
+        <div class="inventory" id="inventory">
+            <h3>Inventory</h3>
+            <div class="inventory-grid" id="inventoryGrid"></div>
+            <button class="close-btn" onclick="toggleInventory()">Close</button>
         </div>
+
+        <div class="message" id="message"></div>
     </div>
 
-    <div class="house red redhouse" style="bottom: 0">
-        <div class="box">
-            <div class="square square-one red" id="redrestart1">
-                
-                
-                
-                
-                <svg class="redpiece" id="red1"
-    version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    x="0%" y="0%"
-    width="100%" height="100%"
-    viewBox="0 0 24.0 24.0"
-    enable-background="new 0 0 24.0 24.0"
-    xml:space="preserve">
-<defs>
-    <linearGradient id="stkGrad1" x1="-3.107%" y1="49.865%" x2="100.605%" y2="50.091%">
-           <stop offset="0.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.078%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.915%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.308%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.397%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="24.482%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="23.852%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.406%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.673%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="40.151%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="39.950%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="47.912%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="48.169%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.636%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.896%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.504%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.484%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.505%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.453%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.398%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.685%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.747%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.677%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.395%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.665%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="100.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-    </linearGradient>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        // Made by PKAutuly02
+        // Responsive canvas sizing
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
 
-</defs>
-    <path
-        fill="#FFFFFF"
-        stroke="#682400"
-        fill-opacity="0.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="1.0240875"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,12.38C14.95,12.38,17.21,14.53,17.21,17.19C17.21,19.84,14.95,21.99,12.15,21.99C9.35,21.99,7.09,19.84,7.09,17.19C7.09,14.53,9.35,12.38,12.15,12.38z"/>
-    <path class="pieceready" id="red1ready"
-        transform = "rotate(-0.00 12.15 17.19)"
-        fill="#FFFFFF"
-        stroke="url(#stkGrad1)"
-        fill-opacity="0.000"
-        stroke-opacity="1.0"
-        fill-rule="nonzero"
-        stroke-width="0.71999997"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,11.55C15.26,11.55,17.79,14.07,17.79,17.19C17.79,20.30,15.26,22.82,12.15,22.82C9.04,22.82,6.51,20.30,6.51,17.19C6.51,14.07,9.04,11.55,12.15,11.55z"/>
-    <path
-        fill="#FFFFFF"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,17.19C9.33,14.13,6.17,10.31,6.01,6.69C6.01,-1.10,18.15,-1.10,18.11,6.65C17.96,10.00,15.12,14.17,12.15,17.19z"/>
-    <path
-        fill="#ec1d27"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M11.92,2.70C14.17,2.70,15.99,4.52,15.99,6.77C15.99,9.02,14.17,10.85,11.92,10.85C9.67,10.85,7.85,9.02,7.85,6.77C7.85,4.52,9.67,2.70,11.92,2.70z"/>
-</svg>
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-            </div>
-            <div class="square square-two red" id="redrestart2">
-                
-                
-                <svg class="redpiece" id="red2"
-    version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    x="0%" y="0%"
-    width="100%" height="100%"
-    viewBox="0 0 24.0 24.0"
-    enable-background="new 0 0 24.0 24.0"
-    xml:space="preserve">
-<defs>
-    <linearGradient id="stkGrad1" x1="-3.107%" y1="49.865%" x2="100.605%" y2="50.091%">
-           <stop offset="0.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.078%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.915%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.308%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.397%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="24.482%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="23.852%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.406%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.673%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="40.151%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="39.950%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="47.912%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="48.169%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.636%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.896%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.504%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.484%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.505%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.453%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.398%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.685%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.747%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.677%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.395%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.665%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="100.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-    </linearGradient>
+        // Game state
+        const game = {
+            level: 1,
+            hp: 100,
+            maxHp: 100,
+            xp: 0,
+            xpNext: 100,
+            gold: 0,
+            keys: {},
+            camera: { x: 0, y: 0 },
+            tileSize: 32,
+            mapWidth: 50,
+            mapHeight: 50
+        };
 
-</defs>
-    <path
-        fill="#FFFFFF"
-        stroke="#682400"
-        fill-opacity="0.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="1.0240875"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,12.38C14.95,12.38,17.21,14.53,17.21,17.19C17.21,19.84,14.95,21.99,12.15,21.99C9.35,21.99,7.09,19.84,7.09,17.19C7.09,14.53,9.35,12.38,12.15,12.38z"/>
-    <path class="pieceready" id="red2ready"
-        transform = "rotate(-0.00 12.15 17.19)"
-        fill="#FFFFFF"
-        stroke="url(#stkGrad1)"
-        fill-opacity="0.000"
-        stroke-opacity="1.0"
-        fill-rule="nonzero"
-        stroke-width="0.71999997"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,11.55C15.26,11.55,17.79,14.07,17.79,17.19C17.79,20.30,15.26,22.82,12.15,22.82C9.04,22.82,6.51,20.30,6.51,17.19C6.51,14.07,9.04,11.55,12.15,11.55z"/>
-    <path
-        fill="#FFFFFF"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,17.19C9.33,14.13,6.17,10.31,6.01,6.69C6.01,-1.10,18.15,-1.10,18.11,6.65C17.96,10.00,15.12,14.17,12.15,17.19z"/>
-    <path
-        fill="#ec1d27"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M11.92,2.70C14.17,2.70,15.99,4.52,15.99,6.77C15.99,9.02,14.17,10.85,11.92,10.85C9.67,10.85,7.85,9.02,7.85,6.77C7.85,4.52,9.67,2.70,11.92,2.70z"/>
-</svg>
-                
-                
-                
-                
-                
-            </div>
-            <div class="square square-three red" id="redrestart3" >
-                
-                
-                <svg class="redpiece" id="red3"
-    version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    x="0%" y="0%"
-    width="100%" height="100%"
-    viewBox="0 0 24.0 24.0"
-    enable-background="new 0 0 24.0 24.0"
-    xml:space="preserve">
-<defs>
-    <linearGradient id="stkGrad1" x1="-3.107%" y1="49.865%" x2="100.605%" y2="50.091%">
-           <stop offset="0.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.078%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.915%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.308%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.397%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="24.482%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="23.852%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.406%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.673%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="40.151%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="39.950%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="47.912%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="48.169%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.636%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.896%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.504%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.484%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.505%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.453%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.398%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.685%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.747%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.677%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.395%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.665%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="100.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-    </linearGradient>
+        // Player object
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            width: 24,
+            height: 24,
+            speed: 3,
+            color: '#4169E1',
+            lastAttack: 0,
+            attackCooldown: 500
+        };
 
-</defs>
-    <path
-        fill="#FFFFFF"
-        stroke="#682400"
-        fill-opacity="0.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="1.0240875"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,12.38C14.95,12.38,17.21,14.53,17.21,17.19C17.21,19.84,14.95,21.99,12.15,21.99C9.35,21.99,7.09,19.84,7.09,17.19C7.09,14.53,9.35,12.38,12.15,12.38z"/>
-    <path class="pieceready" id="red3ready"
-        transform = "rotate(-0.00 12.15 17.19)"
-        fill="#FFFFFF"
-        stroke="url(#stkGrad1)"
-        fill-opacity="0.000"
-        stroke-opacity="1.0"
-        fill-rule="nonzero"
-        stroke-width="0.71999997"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,11.55C15.26,11.55,17.79,14.07,17.79,17.19C17.79,20.30,15.26,22.82,12.15,22.82C9.04,22.82,6.51,20.30,6.51,17.19C6.51,14.07,9.04,11.55,12.15,11.55z"/>
-    <path
-        fill="#FFFFFF"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,17.19C9.33,14.13,6.17,10.31,6.01,6.69C6.01,-1.10,18.15,-1.10,18.11,6.65C17.96,10.00,15.12,14.17,12.15,17.19z"/>
-    <path
-        fill="#ec1d27"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M11.92,2.70C14.17,2.70,15.99,4.52,15.99,6.77C15.99,9.02,14.17,10.85,11.92,10.85C9.67,10.85,7.85,9.02,7.85,6.77C7.85,4.52,9.67,2.70,11.92,2.70z"/>
-</svg>
-                
-                
-                
-                
-            </div>
-            <div class="square square-four red" id="redrestart4">
-                
-                
-                <svg class="redpiece" id="red4"
-    version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    x="0%" y="0%"
-    width="100%" height="100%"
-    viewBox="0 0 24.0 24.0"
-    enable-background="new 0 0 24.0 24.0"
-    xml:space="preserve">
-<defs>
-    <linearGradient id="stkGrad1" x1="-3.107%" y1="49.865%" x2="100.605%" y2="50.091%">
-           <stop offset="0.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.078%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="6.915%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.308%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="15.397%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="24.482%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="23.852%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.406%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="31.673%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="40.151%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="39.950%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="47.912%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="48.169%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.636%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="56.896%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.504%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="63.484%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.505%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="70.453%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.398%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="78.685%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.747%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="86.677%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.395%" style="stop-color:rgb(255,255,255);stop-opacity:1.000" />
-        <stop offset="95.665%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-        <stop offset="100.000%" style="stop-color:rgb(0,0,0);stop-opacity:1.000" />
-    </linearGradient>
+        // Game objects
+        let enemies = [];
+        let items = [];
+        let particles = [];
+        let trees = [];
+        let rocks = [];
 
-</defs>
-    <path
-        fill="#FFFFFF"
-        stroke="#682400"
-        fill-opacity="0.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="1.0240875"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,12.38C14.95,12.38,17.21,14.53,17.21,17.19C17.21,19.84,14.95,21.99,12.15,21.99C9.35,21.99,7.09,19.84,7.09,17.19C7.09,14.53,9.35,12.38,12.15,12.38z"/>
-    <path class="pieceready" id="red4ready"
-        transform = "rotate(-0.00 12.15 17.19)"
-        fill="#FFFFFF"
-        stroke="url(#stkGrad1)"
-        fill-opacity="0.000"
-        stroke-opacity="1.0"
-        fill-rule="nonzero"
-        stroke-width="0.71999997"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,11.55C15.26,11.55,17.79,14.07,17.79,17.19C17.79,20.30,15.26,22.82,12.15,22.82C9.04,22.82,6.51,20.30,6.51,17.19C6.51,14.07,9.04,11.55,12.15,11.55z"/>
-    <path
-        fill="#FFFFFF"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.15,17.19C9.33,14.13,6.17,10.31,6.01,6.69C6.01,-1.10,18.15,-1.10,18.11,6.65C17.96,10.00,15.12,14.17,12.15,17.19z"/>
-    <path
-        fill="#ec1d27"
-        stroke="#000000"
-        fill-opacity="1.000"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.4011954"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M11.92,2.70C14.17,2.70,15.99,4.52,15.99,6.77C15.99,9.02,14.17,10.85,11.92,10.85C9.67,10.85,7.85,9.02,7.85,6.77C7.85,4.52,9.67,2.70,11.92,2.70z"/>
-</svg>
-                
-                
-                
-                
-            </div>
-        </div>
-    </div>
+        // Sprite creation system
+        const sprites = {};
 
-    <div class="house blue bluehouse" style="bottom: 0;right: 0">
-        <div class="box">
-            <div class="square square-one blue"></div>
-            <div class="square square-two blue"></div>
-            <div class="square square-three blue"></div>
-            <div class="square square-four blue"></div>
-        </div>
-    </div>
+        function createSprite(name, width, height, drawFunction) {
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            drawFunction(ctx, width, height);
+            sprites[name] = canvas;
+        }
 
-    <div class="home">
-        
-      <div class="yellowhome"> 
-      
-      <div class="ysvg y206" id="206"> </div>
-      <div class="ysvg y207" id="207"> </div>
-      <div class="ysvg y208" id="208"> </div>
-      <div class="ysvg y209" id="209"> </div>
-      
-      </div>
-        
-        
-      <div class="redhome"> 
-      
-      <div class="rsvg r106" id="106"> </div>
-      <div class="rsvg r107" id="107"> </div>
-      <div class="rsvg r108" id="108"> </div>
-      <div class="rsvg r109" id="109"> </div>
-      
-      </div>
-        
-    </div>
-    <div class="cells" id="39"style="top: 40%;"></div>
-    <div class="cells g-start" id="40"style="top: 40%;left:6.66%; background-color:#01A147"><span>40</span></div>
-    <div class="cells" id="41"style="top: 40%;left:13.32%;"></div>
-    <div class="cells" id="42"style="top: 40%;left:19.98%;"></div>
-    <div class="cells" id="43"style="top: 40%;left:26.64%;"></div>
-    <div class="cells" id="44"style="top: 40%;left:33.3%;"></div>
+        function initSprites() {
+            // Player sprite
+            createSprite('player', 24, 24, (ctx, w, h) => {
+                // Body
+                ctx.fillStyle = '#4169E1';
+                ctx.fillRect(8, 8, 8, 12);
+                // Head
+                ctx.fillStyle = '#FFDBAC';
+                ctx.fillRect(8, 4, 8, 8);
+                // Hair
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(8, 4, 8, 4);
+                // Arms
+                ctx.fillStyle = '#FFDBAC';
+                ctx.fillRect(4, 10, 4, 6);
+                ctx.fillRect(16, 10, 4, 6);
+                // Legs
+                ctx.fillStyle = '#654321';
+                ctx.fillRect(8, 16, 3, 8);
+                ctx.fillRect(13, 16, 3, 8);
+                // Eyes
+                ctx.fillStyle = '#000';
+                ctx.fillRect(10, 6, 1, 1);
+                ctx.fillRect(13, 6, 1, 1);
+            });
 
-    <div class="cells" id="50"style="top: 0;left:40%;"></div>
-    <div class="cells" id="49"style="top: 6.66%;left:40%;"></div>
-    <div class="cells safe" id="48"style="top: 13.32%;left:40%;"><span>48</span></div>
-    <div class="cells" id="47"style="top: 19.98%;left:40%;"></div>
-    <div class="cells" id="46"style="top: 26.64%;left:40%;"></div>
-    <div class="cells" id="45"style="top: 33.3%;left:40%;"></div>
+            // Goblin sprite
+            createSprite('goblin', 20, 20, (ctx, w, h) => {
+                // Body
+                ctx.fillStyle = '#228B22';
+                ctx.fillRect(6, 8, 8, 8);
+                // Head
+                ctx.fillStyle = '#32CD32';
+                ctx.fillRect(6, 4, 8, 8);
+                // Ears
+                ctx.fillStyle = '#228B22';
+                ctx.fillRect(4, 6, 2, 2);
+                ctx.fillRect(14, 6, 2, 2);
+                // Arms
+                ctx.fillRect(2, 10, 4, 4);
+                ctx.fillRect(14, 10, 4, 4);
+                // Legs
+                ctx.fillRect(6, 14, 3, 6);
+                ctx.fillRect(11, 14, 3, 6);
+                // Eyes (red)
+                ctx.fillStyle = '#FF0000';
+                ctx.fillRect(8, 6, 1, 1);
+                ctx.fillRect(11, 6, 1, 1);
+                // Weapon
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(18, 4, 2, 8);
+                ctx.fillStyle = '#C0C0C0';
+                ctx.fillRect(18, 4, 2, 3);
+            });
+            // Made by PKAutuly02
+            // Orc sprite
+            createSprite('orc', 20, 20, (ctx, w, h) => {
+                // Body
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(5, 8, 10, 8);
+                // Head
+                ctx.fillStyle = '#654321';
+                ctx.fillRect(5, 3, 10, 8);
+                // Tusks
+                ctx.fillStyle = '#FFF';
+                ctx.fillRect(7, 9, 1, 2);
+                ctx.fillRect(12, 9, 1, 2);
+                // Arms
+                ctx.fillStyle = '#654321';
+                ctx.fillRect(1, 10, 4, 5);
+                ctx.fillRect(15, 10, 4, 5);
+                // Legs
+                ctx.fillRect(5, 14, 4, 6);
+                ctx.fillRect(11, 14, 4, 6);
+                // Eyes (red)
+                ctx.fillStyle = '#FF0000';
+                ctx.fillRect(7, 5, 2, 1);
+                ctx.fillRect(11, 5, 2, 1);
+                // Armor
+                ctx.fillStyle = '#696969';
+                ctx.fillRect(6, 9, 8, 2);
+            });
 
-    <div class="cells" id="51"style="top: 0;left:46.66%;"></div>
-    <div class="cells yellow" id="201" style="top: 6.66%;left:46.66%;"></div>
-    <div class="cells yellow" id="202" style="top: 13.32%;left:46.66%;"></div>
-    <div class="cells yellow" id="203" style="top: 19.98%;left:46.66%;"></div>
-    <div class="cells yellow" id="204" style="top: 26.64%;left:46.66%;"></div>
-    <div class="cells yellow" id="205" style="top: 33.3%;left:46.66%;"></div>
+            // Wolf sprite
+            createSprite('wolf', 20, 20, (ctx, w, h) => {
+                // Body
+                ctx.fillStyle = '#696969';
+                ctx.fillRect(4, 10, 12, 6);
+                // Head
+                ctx.fillRect(2, 8, 6, 6);
+                // Ears
+                ctx.fillStyle = '#2F4F4F';
+                ctx.fillRect(2, 6, 2, 3);
+                ctx.fillRect(5, 6, 2, 3);
+                // Tail
+                ctx.fillStyle = '#696969';
+                ctx.fillRect(14, 8, 4, 3);
+                // Legs
+                ctx.fillRect(5, 14, 2, 4);
+                ctx.fillRect(8, 14, 2, 4);
+                ctx.fillRect(11, 14, 2, 4);
+                ctx.fillRect(14, 14, 2, 4);
+                // Eyes
+                ctx.fillStyle = '#FFD700';
+                ctx.fillRect(3, 9, 1, 1);
+                ctx.fillRect(5, 9, 1, 1);
+                // Nose
+                ctx.fillStyle = '#000';
+                ctx.fillRect(1, 10, 1, 1);
+            });
 
-    <div class="cells" id="52"style="top: 0;left:53.32%;"></div>
-    <div class="cells y-start" id="1"style="top: 6.66%;left:53.32%;"><span>1</span></div>
-    <div class="cells" id="2"style="top: 13.32%;left:53.32%;"></div>
-    <div class="cells" id="3" style="top: 19.98%;left:53.32%;"></div>
-    <div class="cells" id="4" style="top: 26.64%;left:53.32%;"></div>
-    <div class="cells" id="5" style="top: 33.3%;left:53.32%;"></div>
+            // Tree sprite
+            createSprite('tree', 24, 32, (ctx, w, h) => {
+                // Trunk
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(8, 20, 8, 12);
+                // Tree crown
+                ctx.fillStyle = '#228B22';
+                ctx.fillRect(4, 4, 16, 20);
+                // Tree highlights
+                ctx.fillStyle = '#32CD32';
+                ctx.fillRect(6, 8, 4, 4);
+                ctx.fillRect(14, 12, 4, 4);
+                ctx.fillRect(8, 16, 4, 4);
+            });
 
-    <div class="cells" id="6"style="top: 40%; right: 33.3%"></div>
-    <div class="cells" id="7"style="top: 40%;right:26.64%;"></div>
-    <div class="cells" id="8"style="top: 40%;right:19.98%;"></div>
-    <div class="cells safe" id="9"style="top: 40%;right:13.32%;"><span>9</span></div>
-    <div class="cells" id="10"style="top: 40%;right:6.66%;"></div>
-    <div class="cells" id="11"style="top: 40%;right:0;"></div>
+            // Rock sprite
+            createSprite('rock', 20, 16, (ctx, w, h) => {
+                // Main rock
+                ctx.fillStyle = '#696969';
+                ctx.fillRect(2, 4, 16, 12);
+                // Rock highlights
+                ctx.fillStyle = '#A9A9A9';
+                ctx.fillRect(4, 6, 4, 3);
+                ctx.fillRect(12, 8, 4, 3);
+                // Rock shadows
+                ctx.fillStyle = '#2F4F4F';
+                ctx.fillRect(2, 12, 16, 4);
+            });
 
-    <div class="cells blue" style="top: 46.66%; right: 33.3%"></div>
-    <div class="cells blue" style="top: 46.66%;right:26.64%;"></div>
-    <div class="cells blue" style="top: 46.66%;right:19.98%;"></div>
-    <div class="cells blue" style="top: 46.66%;right:13.32%;"></div>
-    <div class="cells blue" style="top: 46.66%;right:6.66%;"></div>
-    <div class="cells" id="12"style="top: 46.66%;right:0;"></div>
+            // Health potion sprite
+            createSprite('healthPotion', 16, 16, (ctx, w, h) => {
+                // Bottle
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(5, 2, 6, 12);
+                // Potion liquid
+                ctx.fillStyle = '#FF1493';
+                ctx.fillRect(6, 4, 4, 9);
+                // Cork
+                ctx.fillStyle = '#654321';
+                ctx.fillRect(6, 1, 4, 3);
+                // Highlight
+                ctx.fillStyle = '#FFB6C1';
+                ctx.fillRect(7, 5, 1, 6);
+            });
 
-    <div class="cells" id="18"style="top: 53.32%; right: 33.3%"></div>
-    <div class="cells" id="17"style="top: 53.32%;right:26.64%;"></div>
-    <div class="cells" id="16"style="top: 53.32%;right:19.98%;"></div>
-    <div class="cells" id="15"style="top: 53.32%;right:13.32%;"></div>
-    <div class="cells b-start" id="14"style="top: 53.32%;right:6.66%;"><span>14</span></div>
-    <div class="cells" id="13"style="top: 53.32%;right:0;"></div>
+            // Gold coin sprite
+            createSprite('goldCoin', 16, 16, (ctx, w, h) => {
+                // Coin base
+                ctx.fillStyle = '#FFD700';
+                ctx.fillRect(3, 3, 10, 10);
+                // Inner circle
+                ctx.fillStyle = '#FFA500';
+                ctx.fillRect(5, 5, 6, 6);
+                // Shine
+                ctx.fillStyle = '#FFFF00';
+                ctx.fillRect(6, 6, 2, 2);
+                ctx.fillRect(9, 8, 1, 1);
+            });
 
-    <div class="cells" id="24"style="bottom: 0;left:53.32%;"> </div>
-    <div class="cells" id="23"style="bottom: 6.66%;left:53.32%;"> </div>
-    <div class="cells safe" id="22"style="bottom: 13.32%;left:53.32%;"><span>22</span></div>
-    <div class="cells" id="21"style="bottom: 19.98%;left:53.32%;"> </div>
-    <div class="cells" id="20"style="bottom: 26.64%;left:53.32%;"> </div>
-    <div class="cells" id="19"style="bottom: 33.3%;left:53.32%;"> </div>
+            // Sword sprite
+            createSprite('sword', 16, 16, (ctx, w, h) => {
+                // Handle
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(7, 12, 2, 4);
+                // Guard
+                ctx.fillStyle = '#C0C0C0';
+                ctx.fillRect(5, 10, 6, 2);
+                // Blade
+                ctx.fillStyle = '#E6E6FA';
+                ctx.fillRect(7, 2, 2, 10);
+                // Blade edge
+                ctx.fillStyle = '#FFF';
+                ctx.fillRect(7, 2, 1, 8);
+            });
 
-    <div class="cells" id="25"style="bottom: 0;left:46.66%;"> </div>
-    <div class="cells red " id="101"style="bottom: 6.66%;left:46.66%;"></div>
-    <div class="cells red" id="102"style="bottom: 13.32%;left:46.66%;"></div>
-    <div class="cells red" id="103"style="bottom: 19.98%;left:46.66%;"></div>
-    <div class="cells red" id="104"style="bottom: 26.64%;left:46.66%;"></div>
-    <div class="cells red" id="105"style="bottom: 33.3%;left:46.66%;"></div>
+            // Apple sprite
+            createSprite('apple', 16, 16, (ctx, w, h) => {
+                // Apple body
+                ctx.fillStyle = '#FF0000';
+                ctx.fillRect(4, 6, 8, 8);
+                // Apple highlight
+                ctx.fillStyle = '#FF6347';
+                ctx.fillRect(5, 7, 3, 3);
+                // Apple stem
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(7, 4, 2, 3);
+                // Leaf
+                ctx.fillStyle = '#228B22';
+                ctx.fillRect(8, 4, 3, 2);
+            });
+        }
 
-    <div class="cells" id="26" style="bottom: 0;left:40%;"> </div>
-    <div class="cells r-start" id="27"style="bottom: 6.66%;left:40%;"><span>27</span></div>
-    <div class="cells" id="28" style="bottom: 13.32%;left:40%;"> </div>
-    <div class="cells" id="29"style="bottom: 19.98%;left:40%;"> </div>
-    <div class="cells" id="30" style="bottom: 26.64%;left:40%;"> </div>
-    <div class="cells" id="31"style="bottom: 33.3%;left:40%;"> </div>
+        // Inventory system
+        const inventory = {
+            items: [],
+            maxSlots: 16,
+            add(item) {
+                if (this.items.length < this.maxSlots) {
+                    const existing = this.items.find(i => i.name === item.name);
+                    if (existing) {
+                        existing.quantity += item.quantity || 1;
+                    } else {
+                        this.items.push({ ...item, quantity: item.quantity || 1 });
+                    }
+                    return true;
+                }
+                return false;
+            }
+        };
+        // Made By PKAutuly02
+        // Generate world
+        function generateWorld() {
+            // Generate trees
+            for (let i = 0; i < 200; i++) {
+                trees.push({
+                    x: Math.random() * (game.mapWidth * game.tileSize),
+                    y: Math.random() * (game.mapHeight * game.tileSize),
+                    width: 24,
+                    height: 32
+                });
+            }
 
-    <div class="cells" id="32"style="top: 53.32%; left: 33.3%"> </div>
-    <div class="cells" id="33"style="top: 53.32%;left:26.64%;"> </div>
-    <div class="cells" id="34"style="top: 53.32%;left:19.98%;"> </div>
-    <div class="cells safe" id="35"style="top: 53.32%;left:13.32%;"> <span>35</span></div>
-    <div class="cells" id="36"style="top: 53.32%;left:6.66%;"> </div>
-    <div class="cells" id="37"style="top: 53.32%;left:0;"> </div>
+            // Generate rocks
+            for (let i = 0; i < 100; i++) {
+                rocks.push({
+                    x: Math.random() * (game.mapWidth * game.tileSize),
+                    y: Math.random() * (game.mapHeight * game.tileSize),
+                    width: 20,
+                    height: 16
+                });
+            }
 
-    <div class="cells green" id="red111"style="top: 46.66%;left: 33.3%"></div>
-    <div class="cells green" style="top: 46.66%;left:26.64%;"></div>
-    <div class="cells green" style="top: 46.66%;left:19.98%;"></div>
-    <div class="cells green" style="top: 46.66%;left:13.32%;"></div>
-    <div class="cells green" style="top: 46.66%;left:6.66%;"></div>
-    <div class="cells" id="38"style="top: 46.66%;left:0;">   </div>
+            // Generate enemies
+            for (let i = 0; i < 50; i++) {
+                spawnEnemy();
+            }
 
+            // Generate items
+            for (let i = 0; i < 30; i++) {
+                spawnItem();
+            }
+        }
 
-</div>
+        function spawnEnemy() {
+            const types = [
+                { name: 'Goblin', hp: 30, damage: 10, xp: 25, gold: 5, sprite: 'goblin', speed: 1.5 },
+                { name: 'Orc', hp: 60, damage: 20, xp: 50, gold: 10, sprite: 'orc', speed: 1 },
+                { name: 'Wolf', hp: 40, damage: 15, xp: 30, gold: 3, sprite: 'wolf', speed: 2 }
+            ];
 
+            const type = types[Math.floor(Math.random() * types.length)];
+            enemies.push({
+                x: Math.random() * (game.mapWidth * game.tileSize),
+                y: Math.random() * (game.mapHeight * game.tileSize),
+                width: 20,
+                height: 20,
+                maxHp: type.hp,
+                hp: type.hp,
+                damage: type.damage,
+                xp: type.xp,
+                gold: type.gold,
+                speed: type.speed,
+                sprite: type.sprite,
+                name: type.name,
+                lastMove: 0,
+                direction: Math.random() * Math.PI * 2
+            });
+        }
 
-<p id="live">  </p>
+        function spawnItem() {
+            const itemTypes = [
+                { name: 'Health Potion', sprite: 'healthPotion', value: 50, type: 'consumable' },
+                { name: 'Gold Coin', sprite: 'goldCoin', value: 10, type: 'currency' },
+                { name: 'Sword', sprite: 'sword', value: 100, type: 'weapon' },
+                { name: 'Apple', sprite: 'apple', value: 20, type: 'consumable' }
+            ];
 
+            const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+            items.push({
+                x: Math.random() * (game.mapWidth * game.tileSize),
+                y: Math.random() * (game.mapHeight * game.tileSize),
+                width: 16,
+                height: 16,
+                ...type
+            });
+        }
 
-
-
-<div class="ydicebox" id="ydicebox">
-       <div class="ycard" id="front1">
-       
-       <div class="dot1 ydots " > </div>
-       
-       </div>
-       <div class="ycard" id="back1">
-       
-       <div class="dot1 ydots"> </div>
-       <div class="dot2 ydots"> </div>
-       <div class="dot3 ydots"> </div>
-       <div class="dot4 ydots"> </div>
-       <div class="dot5 ydots"> </div>
-       
-       </div>
-       <div class="ycard" id="left1">
-       
-       <div class="dot1 ydots"> </div>
-       <div class="dot2 ydots"> </div>
-       
-       </div>
-       <div class="ycard" id="right1">
-         
-         <div class="dot1 ydots"> </div>
-         <div class="dot2 ydots"> </div>
-         <div class="dot3 ydots"> </div>
-         
-       </div>
-       <div class="ycard" id="top1">
-       
-         <div class="dot1 ydots"> </div>
-         <div class="dot2 ydots"> </div>
-         <div class="dot3 ydots"> </div>
-         <div class="dot4 ydots"> </div>
-         
-       </div>
-       <div class="ycard" id="bottom1">
-         <div class="dot1 ydots"> </div>
-         <div class="dot2 ydots"> </div>
-         <div class="dot3 ydots"> </div>
-         <div class="dot4 ydots"> </div>
-         <div class="dot5 ydots"> </div>
-         <div class="dot6 ydots"> </div>
-       
-       </div>
-    </div> 
-
-<svg id="hintArrowRed"
-    version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    x="0%" y="0%"
-    width="100%" height="100%"
-    viewBox="0 0 24.0 24.0"
-    enable-background="new 0 0 24.0 24.0"
-    xml:space="preserve">
-<defs>
-    <linearGradient id="fillGrad22" x1="49.661%" y1="12.877%" x2="50.010%" y2="98.830%">
-           <stop offset="0.000%" style="stop-color:rgb(239,255,11);stop-opacity:1.000" />
-        <stop offset="49.859%" style="stop-color:rgb(255,149,0);stop-opacity:1.000" />
-        <stop offset="100.000%" style="stop-color:rgb(255,0,0);stop-opacity:1.000" />
-    </linearGradient>
-
-</defs>
-    <path
-        transform = "rotate(-0.00 12.16 12.21)"
-        fill="url(#fillGrad22)"
-        stroke="#000000"
-        fill-opacity="1.0"
-        stroke-opacity="1.000"
-        fill-rule="nonzero"
-        stroke-width="0.3057089"
-        stroke-linejoin="miter"
-        stroke-linecap="square"
-        d="M12.75,19.93L23.31,9.27C23.85,8.62,23.70,8.00,23.00,7.90L20.29,7.90L20.29,4.94Q20.13,4.21,19.15,4.21L4.93,4.17Q3.75,4.16,3.54,5.11L3.54,8.01L1.08,8.01C0.42,8.26,0.63,8.79,1.27,9.62L11.15,19.93Q12.00,20.58,12.75,19.93z"/>
-</svg>
-
-
-
-<div class="rdicebox" id="rdicebox">
-       <div class="card" id="front">
-       
-       <div class="dot1 dots " > </div>
-       
-       </div>
-       <div class="card" id="back">
-       
-       <div class="dot1 dots"> </div>
-       <div class="dot2 dots"> </div>
-       <div class="dot3 dots"> </div>
-       <div class="dot4 dots"> </div>
-       <div class="dot5 dots"> </div>
-       
-       </div>
-       <div class="card" id="left">
-       
-       <div class="dot1 dots"> </div>
-       <div class="dot2 dots"> </div>
-       
-       </div>
-       <div class="card" id="right">
-         
-         <div class="dot1 dots"> </div>
-         <div class="dot2 dots"> </div>
-         <div class="dot3 dots"> </div>
-         
-       </div>
-       <div class="card" id="top">
-       
-         <div class="dot1 dots"> </div>
-         <div class="dot2 dots"> </div>
-         <div class="dot3 dots"> </div>
-         <div class="dot4 dots"> </div>
-         
-       </div>
-       <div class="card" id="bottom">
-         <div class="dot1 dots"> </div>
-         <div class="dot2 dots"> </div>
-         <div class="dot3 dots"> </div>
-         <div class="dot4 dots"> </div>
-         <div class="dot5 dots"> </div>
-         <div class="dot6 dots"> </div>
-       
-       </div>
-    </div>
-    
-    <div class="yellowuser" id="yellowuser">
-<canvas id="my_canvas" width="70" height="70" style="">
-
-</canvas>
-
-<img style="border-radius:50%;" src="https://i.ibb.co/WvCLDPV/images-68.jpg"/>
-
-
-</div>
-
-
-
-<script> 
-
-var al = 100;
-
-var ctx = document.getElementById('my_canvas').getContext('2d'); 
-
-var start = 4.72; 
-var startColor = "#1DFE00"; //red "#1DFE00"
-var cw = ctx.canvas.width; 
-var ch = ctx.canvas.height; 
-var diff; 
-function progressSim(){ 
-    diff = ((al / 100) * Math.PI*2*10).toFixed(2);     ctx.clearRect(0, 0, cw, ch); 
-    ctx.lineWidth = 9;     
-ctx.fillStyle = '#09F'; 
-    ctx.strokeStyle = startColor;     
-ctx.textAlign = 'center';     
-ctx.fillText('', cw*.5, ch*.5+2, cw);     ctx.beginPath();     
-ctx.arc(35, 35, 30, start, diff/10+start, false);     ctx.stroke();
-
-if(al <= 25)
-{
-    startColor = "red";
-}
-else if(al < 60 && al > 25)
-{
-    startColor = "orange";
-}
-else {
-    startColor = "#1DFE00";
-}
-
-
-if(al <= 0){         
-clearInterval(sim);
-
-} 
-    al--; 
-}
-
-sim = setInterval(progressSim, 150); 
-clearInterval(sim);
-
-</script> 
-
-
-<div class="reduser" id="reduser">
-<canvas id="my_canvas2" width="70" height="70" style="">
-
-</canvas>
-
-<img style="border-radius:50%;" src="https://i.ibb.co/QKD4MCt/images-22-01.png"/>
-
-<div class="autoExit">
-    <div id="c3"></div>
-    <div id="c2"></div>
-    <div id="c1"></div>
-</div>
-
-
-</div>
-
-
-
-
-<script> 
-
-
-
-</script>
-
-
-<div class="cheatbox">
-            <p id="dicep6"> 6 Only </p>
-            <div class="switch upswitch" id="dice6ballbg">
-                <div class="ball" id="ball1"> </div>
-            </div>
+        // Input handling
+        document.addEventListener('keydown', (e) => {
+            game.keys[e.code] = true;
             
-            
-            <p id="dicep1"> 1 Only </p>
-            
-            <div class="switch downswitch" id="dice1ballbg">
-                <div class="ball" id="ball2"> </div>
-            </div>
-            
-        </div>
+            if (e.code === 'KeyX') attack();
+            if (e.code === 'KeyI') toggleInventory();
+        });
 
-    <div id="finalnote">
-        
-        <p id="finalnotep"> You Won </p>
-        
-    </div>
-    
-    <p style="position:absolute; bottom:0px; left:50vw; transform:translate(-50%,0%); color:white;"> &copy Vinay K </p>
+        document.addEventListener('keyup', (e) => {
+            game.keys[e.code] = false;
+        });
 
+        // Mobile controls
+        document.querySelectorAll('.dpad-button, .action-button').forEach(button => {
+            button.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const key = button.getAttribute('data-key');
+                game.keys[key] = true;
+                
+                if (key === 'KeyX') attack();
+                if (key === 'KeyI') toggleInventory();
+            });
 
-    </body>
-          </html>
+            button.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                const key = button.getAttribute('data-key');
+                game.keys[key] = false;
+            });
+        });
+
+        // Game functions
+        function updatePlayer() {
+            let newX = player.x;
+            let newY = player.y;
+
+            if (game.keys['ArrowLeft']) newX -= player.speed;
+            if (game.keys['ArrowRight']) newX += player.speed;
+            if (game.keys['ArrowUp']) newY -= player.speed;
+            if (game.keys['ArrowDown']) newY += player.speed;
+
+            // Collision detection with world bounds
+            if (newX >= 0 && newX <= game.mapWidth * game.tileSize - player.width) {
+                player.x = newX;
+            }
+            if (newY >= 0 && newY <= game.mapHeight * game.tileSize - player.height) {
+                player.y = newY;
+            }
+
+            // Update camera to follow player
+            game.camera.x = player.x - canvas.width / 2;
+            game.camera.y = player.y - canvas.height / 2;
+
+            // Keep camera within bounds
+            game.camera.x = Math.max(0, Math.min(game.camera.x, game.mapWidth * game.tileSize - canvas.width));
+            game.camera.y = Math.max(0, Math.min(game.camera.y, game.mapHeight * game.tileSize - canvas.height));
+        }
+
+        function updateEnemies() {
+            enemies.forEach((enemy, index) => {
+                const now = Date.now();
+                
+                // Simple AI - move towards player if close
+                const dx = player.x - enemy.x;
+                const dy = player.y - enemy.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 100) {
+                    // Chase player
+                    enemy.x += (dx / distance) * enemy.speed;
+                    enemy.y += (dy / distance) * enemy.speed;
+                } else if (now - enemy.lastMove > 2000) {
+                    // Random movement
+                    enemy.direction += (Math.random() - 0.5) * 0.5;
+                    enemy.lastMove = now;
+                }
+
+                // Random movement
+                if (distance >= 100) {
+                    enemy.x += Math.cos(enemy.direction) * enemy.speed * 0.5;
+                    enemy.y += Math.sin(enemy.direction) * enemy.speed * 0.5;
+                }
+
+                // Keep enemies within bounds
+                enemy.x = Math.max(0, Math.min(enemy.x, game.mapWidth * game.tileSize - enemy.width));
+                enemy.y = Math.max(0, Math.min(enemy.y, game.mapHeight * game.tileSize - enemy.height));
+
+                // Attack player if close
+                if (distance < 30 && now - (enemy.lastAttack || 0) > 1000) {
+                    takeDamage(enemy.damage);
+                    enemy.lastAttack = now;
+                    createParticles(player.x + player.width/2, player.y + player.height/2, '#FF0000');
+                }
+            });
+        }
+
+        function updateItems() {
+            items.forEach((item, index) => {
+                const dx = player.x - item.x;
+                const dy = player.y - item.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 25) {
+                    collectItem(item);
+                    items.splice(index, 1);
+                }
+            });
+        }
+
+        function attack() {
+            const now = Date.now();
+            if (now - player.lastAttack < player.attackCooldown) return;
+
+            player.lastAttack = now;
+            createParticles(player.x + player.width/2, player.y + player.height/2, '#FFD700');
+
+            enemies.forEach((enemy, index) => {
+                const dx = player.x - enemy.x;
+                const dy = player.y - enemy.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 50) {
+                    enemy.hp -= 25;
+                    createParticles(enemy.x + enemy.width/2, enemy.y + enemy.height/2, '#FF0000');
+
+                    if (enemy.hp <= 0) {
+                        gainXP(enemy.xp);
+                        game.gold += enemy.gold;
+                        createParticles(enemy.x + enemy.width/2, enemy.y + enemy.height/2, '#FFD700', 10);
+                        enemies.splice(index, 1);
+                        
+                        // Respawn enemy elsewhere
+                        setTimeout(() => spawnEnemy(), 5000);
+                    }
+                }
+            });
+        }
+
+        function collectItem(item) {
+            if (item.type === 'currency') {
+                game.gold += item.value;
+                showMessage(`Found ${item.value} gold!`);
+            } else if (item.type === 'consumable' && item.name === 'Health Potion') {
+                game.hp = Math.min(game.maxHp, game.hp + item.value);
+                showMessage(`Restored ${item.value} HP!`);
+            } else if (item.type === 'consumable' && item.name === 'Apple') {
+                game.hp = Math.min(game.maxHp, game.hp + item.value);
+                showMessage(`Ate apple! +${item.value} HP!`);
+            } else {
+                if (inventory.add(item)) {
+                    showMessage(`Found ${item.name}!`);
+                } else {
+                    showMessage('Inventory full!');
+                }
+            }
+
+            createParticles(item.x + item.width/2, item.y + item.height/2, '#00FF00');
+        }
+
+        function takeDamage(damage) {
+            game.hp -= damage;
+            if (game.hp <= 0) {
+                game.hp = 0;
+                showMessage('Game Over! Refresh to restart.');
+            }
+        }
+
+        function gainXP(xp) {
+            game.xp += xp;
+            if (game.xp >= game.xpNext) {
+                levelUp();
+            }
+        }
+
+        function levelUp() {
+            game.level++;
+            game.xp = 0;
+            game.xpNext = game.level * 100;
+            game.maxHp += 20;
+            game.hp = game.maxHp;
+            showMessage(`Level Up! Now level ${game.level}!`);
+            createParticles(player.x + player.width/2, player.y + player.height/2, '#FFD700', 15);
+        }
+
+        function createParticles(x, y, color, count = 5) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6,
+                    size: Math.random() * 4 + 2,
+                    color: color,
+                    life: 1.0,
+                    decay: 0.02
+                });
+            }
+        }
+
+        function updateParticles() {
+            particles.forEach((particle, index) => {
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+                particle.vx *= 0.98;
+                particle.vy *= 0.98;
+                particle.life -= particle.decay;
+
+                if (particle.life <= 0) {
+                    particles.splice(index, 1);
+                }
+            });
+        }
+
+        function showMessage(text) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.style.display = 'block';
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 3000);
+        }
+
+        function toggleInventory() {
+            const inventoryEl = document.getElementById('inventory');
+            const isVisible = inventoryEl.style.display === 'block';
+            inventoryEl.style.display = isVisible ? 'none' : 'block';
+            
+            if (!isVisible) {
+                updateInventoryDisplay();
+            }
+        }
+
+        function updateInventoryDisplay() {
+            const gridEl = document.getElementById('inventoryGrid');
+            gridEl.innerHTML = '';
+
+            for (let i = 0; i < inventory.maxSlots; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'inventory-slot';
+                
+                if (i < inventory.items.length) {
+                    const item = inventory.items[i];
+                    slot.title = `${item.name} (${item.quantity})`;
+                    
+                    // Create mini canvas for sprite
+                    const miniCanvas = document.createElement('canvas');
+                    miniCanvas.width = 32;
+                    miniCanvas.height = 32;
+                    const miniCtx = miniCanvas.getContext('2d');
+                    
+                    if (sprites[item.sprite]) {
+                        // Scale sprite to fit slot
+                        miniCtx.imageSmoothingEnabled = false;
+                        miniCtx.drawImage(sprites[item.sprite], 0, 0, sprites[item.sprite].width, sprites[item.sprite].height, 
+                                        8, 8, 16, 16);
+                    }
+                    
+                    slot.appendChild(miniCanvas);
+                    
+                    // Add quantity text if > 1
+                    if (item.quantity > 1) {
+                        const quantityEl = document.createElement('div');
+                        quantityEl.style.position = 'absolute';
+                        quantityEl.style.bottom = '2px';
+                        quantityEl.style.right = '2px';
+                        quantityEl.style.color = 'white';
+                        quantityEl.style.fontSize = '10px';
+                        quantityEl.style.fontWeight = 'bold';
+                        quantityEl.style.textShadow = '1px 1px 1px black';
+                        quantityEl.textContent = item.quantity;
+                        slot.style.position = 'relative';
+                        slot.appendChild(quantityEl);
+                    }
+                }
+                
+                gridEl.appendChild(slot);
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('level').textContent = game.level;
+            document.getElementById('hp').textContent = game.hp;
+            document.getElementById('maxHp').textContent = game.maxHp;
+            document.getElementById('xp').textContent = game.xp;
+            document.getElementById('xpNext').textContent = game.xpNext;
+            document.getElementById('gold').textContent = game.gold;
+        }
+
+        // Rendering functions
+        function render() {
+            ctx.fillStyle = '#2d5a2d';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw grass pattern
+            ctx.fillStyle = '#1a4a1a';
+            for (let x = 0; x < canvas.width; x += 64) {
+                for (let y = 0; y < canvas.height; y += 64) {
+                    if ((Math.floor(x/64) + Math.floor(y/64)) % 2) {
+                        ctx.fillRect(x, y, 64, 64);
+                    }
+                }
+            }
+
+            // Draw trees
+            trees.forEach(tree => {
+                const screenX = tree.x - game.camera.x;
+                const screenY = tree.y - game.camera.y;
+                
+                if (screenX > -tree.width && screenX < canvas.width && screenY > -tree.height && screenY < canvas.height) {
+                    ctx.drawImage(sprites.tree, screenX, screenY);
+                }
+            });
+            // Made By PKAutuly02
+            // Draw rocks
+            rocks.forEach(rock => {
+                const screenX = rock.x - game.camera.x;
+                const screenY = rock.y - game.camera.y;
+                
+                if (screenX > -rock.width && screenX < canvas.width && screenY > -rock.height && screenY < canvas.height) {
+                    ctx.drawImage(sprites.rock, screenX, screenY);
+                }
+            });
+
+            // Draw items
+            items.forEach(item => {
+                const screenX = item.x - game.camera.x;
+                const screenY = item.y - game.camera.y;
+                
+                if (screenX > -item.width && screenX < canvas.width && screenY > -item.height && screenY < canvas.height) {
+                    // Add slight bobbing animation
+                    const bobOffset = Math.sin(Date.now() * 0.005 + item.x * 0.01) * 2;
+                    ctx.drawImage(sprites[item.sprite], screenX, screenY + bobOffset);
+                }
+            });
+
+            // Draw enemies
+            enemies.forEach(enemy => {
+                const screenX = enemy.x - game.camera.x;
+                const screenY = enemy.y - game.camera.y;
+                
+                if (screenX > -enemy.width && screenX < canvas.width && screenY > -enemy.height && screenY < canvas.height) {
+                    ctx.drawImage(sprites[enemy.sprite], screenX, screenY);
+                    
+                    // Health bar
+                    const hpPercent = enemy.hp / enemy.maxHp;
+                    ctx.fillStyle = '#FF0000';
+                    ctx.fillRect(screenX, screenY - 8, enemy.width, 4);
+                    ctx.fillStyle = '#00FF00';
+                    ctx.fillRect(screenX, screenY - 8, enemy.width * hpPercent, 4);
+                }
+            });
+
+            // Draw player
+            const screenX = player.x - game.camera.x;
+            const screenY = player.y - game.camera.y;
+            ctx.drawImage(sprites.player, screenX, screenY);
+
+            // Draw particles
+            particles.forEach(particle => {
+                const screenX = particle.x - game.camera.x;
+                const screenY = particle.y - game.camera.y;
+                
+                ctx.globalAlpha = particle.life;
+                ctx.fillStyle = particle.color;
+                ctx.fillRect(screenX, screenY, particle.size, particle.size);
+                ctx.globalAlpha = 1;
+            });
+        }
+
+        // Game loop
+        function gameLoop() {
+            updatePlayer();
+            updateEnemies();
+            updateItems();
+            updateParticles();
+            render();
+            updateUI();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Initialize game
+        initSprites();
+        generateWorld();
+        gameLoop();
+        // Made By PKAutuly02
+    </script>
+</body>
+</html>
