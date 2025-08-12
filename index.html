@@ -4,976 +4,579 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="LFrbNrn-QMY0TYg3V0MrZ7Kn23s_XTx2z6gmq3urJFA" />
-    <title>RPG Adventure</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: linear-gradient(135deg, #2c1810, #4a2c18);
-            font-family: 'Courier New', monospace;
-            overflow: hidden;
-            user-select: none;
-        }
-
-        .game-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        canvas {
-            background: linear-gradient(45deg, #1a4a1a, #2d5a2d);
-            flex: 1;
-            display: block;
-        }
-
-        .ui {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: #fff;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 14px;
-            z-index: 10;
-        }
-
-        .mobile-controls {
-            position: absolute;
-            bottom: 20px;
-            width: 100%;
-            height: 120px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            padding: 0 20px;
-            pointer-events: none;
-        }
-
-        .dpad {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            pointer-events: all;
-        }
-
-        .dpad-button {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.1s;
-            user-select: none;
-        }
-
-        .dpad-button:active {
-            background: rgba(255, 255, 255, 0.6);
-            transform: scale(0.95);
-        }
-
-        .dpad-up { top: 0; left: 40px; }
-        .dpad-down { bottom: 0; left: 40px; }
-        .dpad-left { top: 40px; left: 0; }
-        .dpad-right { top: 40px; right: 0; }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            pointer-events: all;
-        }
-
-        .action-button {
-            width: 60px;
-            height: 60px;
-            background: rgba(255, 100, 100, 0.3);
-            border: 2px solid rgba(255, 100, 100, 0.7);
-            border-radius: 50%;
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.1s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .action-button:active {
-            background: rgba(255, 100, 100, 0.7);
-            transform: scale(0.95);
-        }
-
-        .inventory {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #8B4513;
-            border-radius: 10px;
-            padding: 20px;
-            color: white;
-            display: none;
-            z-index: 20;
-            max-width: 400px;
-            width: 90%;
-        }
-
-        .inventory h3 {
-            margin-bottom: 15px;
-            color: #FFD700;
-            text-align: center;
-        }
-
-        .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .inventory-slot {
-            width: 50px;
-            height: 50px;
-            border: 2px solid #8B4513;
-            background: rgba(139, 69, 19, 0.2);
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .close-btn {
-            background: #8B4513;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            display: block;
-            margin: 0 auto;
-        }
-
-        .message {
-            position: absolute;
-            bottom: 150px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            display: none;
-            z-index: 15;
-            max-width: 300px;
-            text-align: center;
-        }
-
-        @media (min-width: 768px) {
-            .mobile-controls {
-                display: none;
-            }
-        }
-
-        @media (max-width: 767px) {
-            .ui {
-                font-size: 12px;
-                padding: 8px;
-            }
-        }
-    </style>
+    <title>Dark Fantasy Explorer by Aadarsh</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+body{margin:0;overflow:hidden;background:#000;font-family:monospace;touch-action:none;user-select:none}
+#startScreen{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#1a1a2e,#2a2a4a,#3a3a5a);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:200}
+#startScreen h1{color:#fff;font-size:42px;margin-bottom:20px;text-shadow:0 0 20px #fff}
+#startScreen p{color:#ccc;font-size:16px;margin-bottom:30px;text-align:center;max-width:400px}
+#startBtn{background:#4a4a7a;color:#fff;border:3px solid #6a6a9a;padding:12px 30px;font-size:18px;font-family:monospace;border-radius:8px;cursor:pointer;transition:all 0.3s}
+#startBtn:hover{background:#6a6a9a;transform:scale(1.05)}
+#loadingScreen{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#0a0a1a,#1a1a2a);display:none;flex-direction:column;justify-content:center;align-items:center;z-index:200}
+#loadingScreen h2{color:#fff;font-size:28px;margin-bottom:15px}
+#loadingScreen p{color:#aaa;font-size:14px;margin-bottom:25px}
+.spinner{width:50px;height:50px;border:4px solid rgba(255,255,255,0.3);border-top:4px solid #fff;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+#ui{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;display:none}
+#instructions{position:absolute;top:15px;left:15px;color:#fff;font-size:12px;background:rgba(0,0,0,0.8);padding:10px;border-radius:6px;max-width:250px}
+#crosshair{position:absolute;top:50%;left:50%;width:4px;height:4px;background:#fff;border:1px solid #000;transform:translate(-50%,-50%);border-radius:50%}
+#prompt{position:absolute;bottom:60%;left:50%;transform:translateX(-50%);color:#fff;font-size:14px;background:rgba(0,0,0,0.9);padding:10px 18px;border-radius:15px;display:none}
+#mobileControls{position:fixed;bottom:0;left:0;right:0;height:140px;display:none;pointer-events:none}
+#joystick{position:absolute;bottom:15px;left:15px;width:70px;height:70px;background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.4);border-radius:50%;pointer-events:all}
+#joystickKnob{position:absolute;top:50%;left:50%;width:20px;height:20px;background:rgba(255,255,255,0.8);border-radius:50%;transform:translate(-50%,-50%)}
+#interactBtn{position:absolute;bottom:15px;right:15px;width:45px;height:45px;background:rgba(255,50,50,0.9);border:2px solid rgba(255,255,255,0.8);border-radius:50%;color:white;font-size:14px;font-weight:bold;display:none;justify-content:center;align-items:center;pointer-events:all}
+#jumpBtn{position:absolute;bottom:15px;right:70px;width:45px;height:45px;background:rgba(50,255,50,0.9);border:2px solid rgba(255,255,255,0.8);border-radius:50%;color:white;font-size:12px;font-weight:bold;display:flex;justify-content:center;align-items:center;pointer-events:all}
+</style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="ui">
-            <div>Level: <span id="level">1</span></div>
-            <div>HP: <span id="hp">100</span>/<span id="maxHp">100</span></div>
-            <div>XP: <span id="xp">0</span>/<span id="xpNext">100</span></div>
-            <div>Gold: <span id="gold">0</span></div>
-        </div>
-
-        <canvas id="gameCanvas"></canvas>
-
-        <div class="mobile-controls">
-            <div class="dpad">
-                <div class="dpad-button dpad-up" data-key="ArrowUp">↑</div>
-                <div class="dpad-button dpad-down" data-key="ArrowDown">↓</div>
-                <div class="dpad-button dpad-left" data-key="ArrowLeft">←</div>
-                <div class="dpad-button dpad-right" data-key="ArrowRight">→</div>
-            </div>
-            <div class="action-buttons">
-                <div class="action-button" data-key="KeyX">ATK</div>
-                <div class="action-button" data-key="KeyI">INV</div>
-            </div>
-        </div>
-
-        <div class="inventory" id="inventory">
-            <h3>Inventory</h3>
-            <div class="inventory-grid" id="inventoryGrid"></div>
-            <button class="close-btn" onclick="toggleInventory()">Close</button>
-        </div>
-
-        <div class="message" id="message"></div>
-    </div>
-
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        // Made by PKAutuly02
-        // Responsive canvas sizing
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        // Game state
-        const game = {
-            level: 1,
-            hp: 100,
-            maxHp: 100,
-            xp: 0,
-            xpNext: 100,
-            gold: 0,
-            keys: {},
-            camera: { x: 0, y: 0 },
-            tileSize: 32,
-            mapWidth: 50,
-            mapHeight: 50
-        };
-
-        // Player object
-        const player = {
-            x: canvas.width / 2,
-            y: canvas.height / 2,
-            width: 24,
-            height: 24,
-            speed: 3,
-            color: '#4169E1',
-            lastAttack: 0,
-            attackCooldown: 500
-        };
-
-        // Game objects
-        let enemies = [];
-        let items = [];
-        let particles = [];
-        let trees = [];
-        let rocks = [];
-
-        // Sprite creation system
-        const sprites = {};
-
-        function createSprite(name, width, height, drawFunction) {
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            drawFunction(ctx, width, height);
-            sprites[name] = canvas;
-        }
-
-        function initSprites() {
-            // Player sprite
-            createSprite('player', 24, 24, (ctx, w, h) => {
-                // Body
-                ctx.fillStyle = '#4169E1';
-                ctx.fillRect(8, 8, 8, 12);
-                // Head
-                ctx.fillStyle = '#FFDBAC';
-                ctx.fillRect(8, 4, 8, 8);
-                // Hair
-                ctx.fillStyle = '#8B4513';
-                ctx.fillRect(8, 4, 8, 4);
-                // Arms
-                ctx.fillStyle = '#FFDBAC';
-                ctx.fillRect(4, 10, 4, 6);
-                ctx.fillRect(16, 10, 4, 6);
-                // Legs
-                ctx.fillStyle = '#654321';
-                ctx.fillRect(8, 16, 3, 8);
-                ctx.fillRect(13, 16, 3, 8);
-                // Eyes
-                ctx.fillStyle = '#000';
-                ctx.fillRect(10, 6, 1, 1);
-                ctx.fillRect(13, 6, 1, 1);
-            });
-
-            // Goblin sprite
-            createSprite('goblin', 20, 20, (ctx, w, h) => {
-                // Body
-                ctx.fillStyle = '#228B22';
-                ctx.fillRect(6, 8, 8, 8);
-                // Head
-                ctx.fillStyle = '#32CD32';
-                ctx.fillRect(6, 4, 8, 8);
-                // Ears
-                ctx.fillStyle = '#228B22';
-                ctx.fillRect(4, 6, 2, 2);
-                ctx.fillRect(14, 6, 2, 2);
-                // Arms
-                ctx.fillRect(2, 10, 4, 4);
-                ctx.fillRect(14, 10, 4, 4);
-                // Legs
-                ctx.fillRect(6, 14, 3, 6);
-                ctx.fillRect(11, 14, 3, 6);
-                // Eyes (red)
-                ctx.fillStyle = '#FF0000';
-                ctx.fillRect(8, 6, 1, 1);
-                ctx.fillRect(11, 6, 1, 1);
-                // Weapon
-                ctx.fillStyle = '#8B4513';
-                ctx.fillRect(18, 4, 2, 8);
-                ctx.fillStyle = '#C0C0C0';
-                ctx.fillRect(18, 4, 2, 3);
-            });
-            // Made by PKAutuly02
-            // Orc sprite
-            createSprite('orc', 20, 20, (ctx, w, h) => {
-                // Body
-                ctx.fillStyle = '#8B4513';
-                ctx.fillRect(5, 8, 10, 8);
-                // Head
-                ctx.fillStyle = '#654321';
-                ctx.fillRect(5, 3, 10, 8);
-                // Tusks
-                ctx.fillStyle = '#FFF';
-                ctx.fillRect(7, 9, 1, 2);
-                ctx.fillRect(12, 9, 1, 2);
-                // Arms
-                ctx.fillStyle = '#654321';
-                ctx.fillRect(1, 10, 4, 5);
-                ctx.fillRect(15, 10, 4, 5);
-                // Legs
-                ctx.fillRect(5, 14, 4, 6);
-                ctx.fillRect(11, 14, 4, 6);
-                // Eyes (red)
-                ctx.fillStyle = '#FF0000';
-                ctx.fillRect(7, 5, 2, 1);
-                ctx.fillRect(11, 5, 2, 1);
-                // Armor
-                ctx.fillStyle = '#696969';
-                ctx.fillRect(6, 9, 8, 2);
-            });
-
-            // Wolf sprite
-            createSprite('wolf', 20, 20, (ctx, w, h) => {
-                // Body
-                ctx.fillStyle = '#696969';
-                ctx.fillRect(4, 10, 12, 6);
-                // Head
-                ctx.fillRect(2, 8, 6, 6);
-                // Ears
-                ctx.fillStyle = '#2F4F4F';
-                ctx.fillRect(2, 6, 2, 3);
-                ctx.fillRect(5, 6, 2, 3);
-                // Tail
-                ctx.fillStyle = '#696969';
-                ctx.fillRect(14, 8, 4, 3);
-                // Legs
-                ctx.fillRect(5, 14, 2, 4);
-                ctx.fillRect(8, 14, 2, 4);
-                ctx.fillRect(11, 14, 2, 4);
-                ctx.fillRect(14, 14, 2, 4);
-                // Eyes
-                ctx.fillStyle = '#FFD700';
-                ctx.fillRect(3, 9, 1, 1);
-                ctx.fillRect(5, 9, 1, 1);
-                // Nose
-                ctx.fillStyle = '#000';
-                ctx.fillRect(1, 10, 1, 1);
-            });
-
-            // Tree sprite
-            createSprite('tree', 24, 32, (ctx, w, h) => {
-                // Trunk
-                ctx.fillStyle = '#8B4513';
-                ctx.fillRect(8, 20, 8, 12);
-                // Tree crown
-                ctx.fillStyle = '#228B22';
-                ctx.fillRect(4, 4, 16, 20);
-                // Tree highlights
-                ctx.fillStyle = '#32CD32';
-                ctx.fillRect(6, 8, 4, 4);
-                ctx.fillRect(14, 12, 4, 4);
-                ctx.fillRect(8, 16, 4, 4);
-            });
-
-            // Rock sprite
-            createSprite('rock', 20, 16, (ctx, w, h) => {
-                // Main rock
-                ctx.fillStyle = '#696969';
-                ctx.fillRect(2, 4, 16, 12);
-                // Rock highlights
-                ctx.fillStyle = '#A9A9A9';
-                ctx.fillRect(4, 6, 4, 3);
-                ctx.fillRect(12, 8, 4, 3);
-                // Rock shadows
-                ctx.fillStyle = '#2F4F4F';
-                ctx.fillRect(2, 12, 16, 4);
-            });
-
-            // Health potion sprite
-            createSprite('healthPotion', 16, 16, (ctx, w, h) => {
-                // Bottle
-                ctx.fillStyle = '#8B4513';
-                ctx.fillRect(5, 2, 6, 12);
-                // Potion liquid
-                ctx.fillStyle = '#FF1493';
-                ctx.fillRect(6, 4, 4, 9);
-                // Cork
-                ctx.fillStyle = '#654321';
-                ctx.fillRect(6, 1, 4, 3);
-                // Highlight
-                ctx.fillStyle = '#FFB6C1';
-                ctx.fillRect(7, 5, 1, 6);
-            });
-
-            // Gold coin sprite
-            createSprite('goldCoin', 16, 16, (ctx, w, h) => {
-                // Coin base
-                ctx.fillStyle = '#FFD700';
-                ctx.fillRect(3, 3, 10, 10);
-                // Inner circle
-                ctx.fillStyle = '#FFA500';
-                ctx.fillRect(5, 5, 6, 6);
-                // Shine
-                ctx.fillStyle = '#FFFF00';
-                ctx.fillRect(6, 6, 2, 2);
-                ctx.fillRect(9, 8, 1, 1);
-            });
-
-            // Sword sprite
-            createSprite('sword', 16, 16, (ctx, w, h) => {
-                // Handle
-                ctx.fillStyle = '#8B4513';
-                ctx.fillRect(7, 12, 2, 4);
-                // Guard
-                ctx.fillStyle = '#C0C0C0';
-                ctx.fillRect(5, 10, 6, 2);
-                // Blade
-                ctx.fillStyle = '#E6E6FA';
-                ctx.fillRect(7, 2, 2, 10);
-                // Blade edge
-                ctx.fillStyle = '#FFF';
-                ctx.fillRect(7, 2, 1, 8);
-            });
-
-            // Apple sprite
-            createSprite('apple', 16, 16, (ctx, w, h) => {
-                // Apple body
-                ctx.fillStyle = '#FF0000';
-                ctx.fillRect(4, 6, 8, 8);
-                // Apple highlight
-                ctx.fillStyle = '#FF6347';
-                ctx.fillRect(5, 7, 3, 3);
-                // Apple stem
-                ctx.fillStyle = '#8B4513';
-                ctx.fillRect(7, 4, 2, 3);
-                // Leaf
-                ctx.fillStyle = '#228B22';
-                ctx.fillRect(8, 4, 3, 2);
-            });
-        }
-
-        // Inventory system
-        const inventory = {
-            items: [],
-            maxSlots: 16,
-            add(item) {
-                if (this.items.length < this.maxSlots) {
-                    const existing = this.items.find(i => i.name === item.name);
-                    if (existing) {
-                        existing.quantity += item.quantity || 1;
-                    } else {
-                        this.items.push({ ...item, quantity: item.quantity || 1 });
-                    }
-                    return true;
-                }
-                return false;
-            }
-        };
-        // Made By PKAutuly02
-        // Generate world
-        function generateWorld() {
-            // Generate trees
-            for (let i = 0; i < 200; i++) {
-                trees.push({
-                    x: Math.random() * (game.mapWidth * game.tileSize),
-                    y: Math.random() * (game.mapHeight * game.tileSize),
-                    width: 24,
-                    height: 32
-                });
-            }
-
-            // Generate rocks
-            for (let i = 0; i < 100; i++) {
-                rocks.push({
-                    x: Math.random() * (game.mapWidth * game.tileSize),
-                    y: Math.random() * (game.mapHeight * game.tileSize),
-                    width: 20,
-                    height: 16
-                });
-            }
-
-            // Generate enemies
-            for (let i = 0; i < 50; i++) {
-                spawnEnemy();
-            }
-
-            // Generate items
-            for (let i = 0; i < 30; i++) {
-                spawnItem();
-            }
-        }
-
-        function spawnEnemy() {
-            const types = [
-                { name: 'Goblin', hp: 30, damage: 10, xp: 25, gold: 5, sprite: 'goblin', speed: 1.5 },
-                { name: 'Orc', hp: 60, damage: 20, xp: 50, gold: 10, sprite: 'orc', speed: 1 },
-                { name: 'Wolf', hp: 40, damage: 15, xp: 30, gold: 3, sprite: 'wolf', speed: 2 }
-            ];
-
-            const type = types[Math.floor(Math.random() * types.length)];
-            enemies.push({
-                x: Math.random() * (game.mapWidth * game.tileSize),
-                y: Math.random() * (game.mapHeight * game.tileSize),
-                width: 20,
-                height: 20,
-                maxHp: type.hp,
-                hp: type.hp,
-                damage: type.damage,
-                xp: type.xp,
-                gold: type.gold,
-                speed: type.speed,
-                sprite: type.sprite,
-                name: type.name,
-                lastMove: 0,
-                direction: Math.random() * Math.PI * 2
-            });
-        }
-
-        function spawnItem() {
-            const itemTypes = [
-                { name: 'Health Potion', sprite: 'healthPotion', value: 50, type: 'consumable' },
-                { name: 'Gold Coin', sprite: 'goldCoin', value: 10, type: 'currency' },
-                { name: 'Sword', sprite: 'sword', value: 100, type: 'weapon' },
-                { name: 'Apple', sprite: 'apple', value: 20, type: 'consumable' }
-            ];
-
-            const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
-            items.push({
-                x: Math.random() * (game.mapWidth * game.tileSize),
-                y: Math.random() * (game.mapHeight * game.tileSize),
-                width: 16,
-                height: 16,
-                ...type
-            });
-        }
-
-        // Input handling
-        document.addEventListener('keydown', (e) => {
-            game.keys[e.code] = true;
-            
-            if (e.code === 'KeyX') attack();
-            if (e.code === 'KeyI') toggleInventory();
-        });
-
-        document.addEventListener('keyup', (e) => {
-            game.keys[e.code] = false;
-        });
-
-        // Mobile controls
-        document.querySelectorAll('.dpad-button, .action-button').forEach(button => {
-            button.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                const key = button.getAttribute('data-key');
-                game.keys[key] = true;
-                
-                if (key === 'KeyX') attack();
-                if (key === 'KeyI') toggleInventory();
-            });
-
-            button.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                const key = button.getAttribute('data-key');
-                game.keys[key] = false;
-            });
-        });
-
-        // Game functions
-        function updatePlayer() {
-            let newX = player.x;
-            let newY = player.y;
-
-            if (game.keys['ArrowLeft']) newX -= player.speed;
-            if (game.keys['ArrowRight']) newX += player.speed;
-            if (game.keys['ArrowUp']) newY -= player.speed;
-            if (game.keys['ArrowDown']) newY += player.speed;
-
-            // Collision detection with world bounds
-            if (newX >= 0 && newX <= game.mapWidth * game.tileSize - player.width) {
-                player.x = newX;
-            }
-            if (newY >= 0 && newY <= game.mapHeight * game.tileSize - player.height) {
-                player.y = newY;
-            }
-
-            // Update camera to follow player
-            game.camera.x = player.x - canvas.width / 2;
-            game.camera.y = player.y - canvas.height / 2;
-
-            // Keep camera within bounds
-            game.camera.x = Math.max(0, Math.min(game.camera.x, game.mapWidth * game.tileSize - canvas.width));
-            game.camera.y = Math.max(0, Math.min(game.camera.y, game.mapHeight * game.tileSize - canvas.height));
-        }
-
-        function updateEnemies() {
-            enemies.forEach((enemy, index) => {
-                const now = Date.now();
-                
-                // Simple AI - move towards player if close
-                const dx = player.x - enemy.x;
-                const dy = player.y - enemy.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < 100) {
-                    // Chase player
-                    enemy.x += (dx / distance) * enemy.speed;
-                    enemy.y += (dy / distance) * enemy.speed;
-                } else if (now - enemy.lastMove > 2000) {
-                    // Random movement
-                    enemy.direction += (Math.random() - 0.5) * 0.5;
-                    enemy.lastMove = now;
-                }
-
-                // Random movement
-                if (distance >= 100) {
-                    enemy.x += Math.cos(enemy.direction) * enemy.speed * 0.5;
-                    enemy.y += Math.sin(enemy.direction) * enemy.speed * 0.5;
-                }
-
-                // Keep enemies within bounds
-                enemy.x = Math.max(0, Math.min(enemy.x, game.mapWidth * game.tileSize - enemy.width));
-                enemy.y = Math.max(0, Math.min(enemy.y, game.mapHeight * game.tileSize - enemy.height));
-
-                // Attack player if close
-                if (distance < 30 && now - (enemy.lastAttack || 0) > 1000) {
-                    takeDamage(enemy.damage);
-                    enemy.lastAttack = now;
-                    createParticles(player.x + player.width/2, player.y + player.height/2, '#FF0000');
-                }
-            });
-        }
-
-        function updateItems() {
-            items.forEach((item, index) => {
-                const dx = player.x - item.x;
-                const dy = player.y - item.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < 25) {
-                    collectItem(item);
-                    items.splice(index, 1);
-                }
-            });
-        }
-
-        function attack() {
-            const now = Date.now();
-            if (now - player.lastAttack < player.attackCooldown) return;
-
-            player.lastAttack = now;
-            createParticles(player.x + player.width/2, player.y + player.height/2, '#FFD700');
-
-            enemies.forEach((enemy, index) => {
-                const dx = player.x - enemy.x;
-                const dy = player.y - enemy.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < 50) {
-                    enemy.hp -= 25;
-                    createParticles(enemy.x + enemy.width/2, enemy.y + enemy.height/2, '#FF0000');
-
-                    if (enemy.hp <= 0) {
-                        gainXP(enemy.xp);
-                        game.gold += enemy.gold;
-                        createParticles(enemy.x + enemy.width/2, enemy.y + enemy.height/2, '#FFD700', 10);
-                        enemies.splice(index, 1);
-                        
-                        // Respawn enemy elsewhere
-                        setTimeout(() => spawnEnemy(), 5000);
-                    }
-                }
-            });
-        }
-
-        function collectItem(item) {
-            if (item.type === 'currency') {
-                game.gold += item.value;
-                showMessage(`Found ${item.value} gold!`);
-            } else if (item.type === 'consumable' && item.name === 'Health Potion') {
-                game.hp = Math.min(game.maxHp, game.hp + item.value);
-                showMessage(`Restored ${item.value} HP!`);
-            } else if (item.type === 'consumable' && item.name === 'Apple') {
-                game.hp = Math.min(game.maxHp, game.hp + item.value);
-                showMessage(`Ate apple! +${item.value} HP!`);
-            } else {
-                if (inventory.add(item)) {
-                    showMessage(`Found ${item.name}!`);
-                } else {
-                    showMessage('Inventory full!');
-                }
-            }
-
-            createParticles(item.x + item.width/2, item.y + item.height/2, '#00FF00');
-        }
-
-        function takeDamage(damage) {
-            game.hp -= damage;
-            if (game.hp <= 0) {
-                game.hp = 0;
-                showMessage('Game Over! Refresh to restart.');
-            }
-        }
-
-        function gainXP(xp) {
-            game.xp += xp;
-            if (game.xp >= game.xpNext) {
-                levelUp();
-            }
-        }
-
-        function levelUp() {
-            game.level++;
-            game.xp = 0;
-            game.xpNext = game.level * 100;
-            game.maxHp += 20;
-            game.hp = game.maxHp;
-            showMessage(`Level Up! Now level ${game.level}!`);
-            createParticles(player.x + player.width/2, player.y + player.height/2, '#FFD700', 15);
-        }
-
-        function createParticles(x, y, color, count = 5) {
-            for (let i = 0; i < count; i++) {
-                particles.push({
-                    x: x,
-                    y: y,
-                    vx: (Math.random() - 0.5) * 6,
-                    vy: (Math.random() - 0.5) * 6,
-                    size: Math.random() * 4 + 2,
-                    color: color,
-                    life: 1.0,
-                    decay: 0.02
-                });
-            }
-        }
-
-        function updateParticles() {
-            particles.forEach((particle, index) => {
-                particle.x += particle.vx;
-                particle.y += particle.vy;
-                particle.vx *= 0.98;
-                particle.vy *= 0.98;
-                particle.life -= particle.decay;
-
-                if (particle.life <= 0) {
-                    particles.splice(index, 1);
-                }
-            });
-        }
-
-        function showMessage(text) {
-            const messageEl = document.getElementById('message');
-            messageEl.textContent = text;
-            messageEl.style.display = 'block';
-            setTimeout(() => {
-                messageEl.style.display = 'none';
-            }, 3000);
-        }
-
-        function toggleInventory() {
-            const inventoryEl = document.getElementById('inventory');
-            const isVisible = inventoryEl.style.display === 'block';
-            inventoryEl.style.display = isVisible ? 'none' : 'block';
-            
-            if (!isVisible) {
-                updateInventoryDisplay();
-            }
-        }
-
-        function updateInventoryDisplay() {
-            const gridEl = document.getElementById('inventoryGrid');
-            gridEl.innerHTML = '';
-
-            for (let i = 0; i < inventory.maxSlots; i++) {
-                const slot = document.createElement('div');
-                slot.className = 'inventory-slot';
-                
-                if (i < inventory.items.length) {
-                    const item = inventory.items[i];
-                    slot.title = `${item.name} (${item.quantity})`;
-                    
-                    // Create mini canvas for sprite
-                    const miniCanvas = document.createElement('canvas');
-                    miniCanvas.width = 32;
-                    miniCanvas.height = 32;
-                    const miniCtx = miniCanvas.getContext('2d');
-                    
-                    if (sprites[item.sprite]) {
-                        // Scale sprite to fit slot
-                        miniCtx.imageSmoothingEnabled = false;
-                        miniCtx.drawImage(sprites[item.sprite], 0, 0, sprites[item.sprite].width, sprites[item.sprite].height, 
-                                        8, 8, 16, 16);
-                    }
-                    
-                    slot.appendChild(miniCanvas);
-                    
-                    // Add quantity text if > 1
-                    if (item.quantity > 1) {
-                        const quantityEl = document.createElement('div');
-                        quantityEl.style.position = 'absolute';
-                        quantityEl.style.bottom = '2px';
-                        quantityEl.style.right = '2px';
-                        quantityEl.style.color = 'white';
-                        quantityEl.style.fontSize = '10px';
-                        quantityEl.style.fontWeight = 'bold';
-                        quantityEl.style.textShadow = '1px 1px 1px black';
-                        quantityEl.textContent = item.quantity;
-                        slot.style.position = 'relative';
-                        slot.appendChild(quantityEl);
-                    }
-                }
-                
-                gridEl.appendChild(slot);
-            }
-        }
-
-        function updateUI() {
-            document.getElementById('level').textContent = game.level;
-            document.getElementById('hp').textContent = game.hp;
-            document.getElementById('maxHp').textContent = game.maxHp;
-            document.getElementById('xp').textContent = game.xp;
-            document.getElementById('xpNext').textContent = game.xpNext;
-            document.getElementById('gold').textContent = game.gold;
-        }
-
-        // Rendering functions
-        function render() {
-            ctx.fillStyle = '#2d5a2d';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Draw grass pattern
-            ctx.fillStyle = '#1a4a1a';
-            for (let x = 0; x < canvas.width; x += 64) {
-                for (let y = 0; y < canvas.height; y += 64) {
-                    if ((Math.floor(x/64) + Math.floor(y/64)) % 2) {
-                        ctx.fillRect(x, y, 64, 64);
-                    }
-                }
-            }
-
-            // Draw trees
-            trees.forEach(tree => {
-                const screenX = tree.x - game.camera.x;
-                const screenY = tree.y - game.camera.y;
-                
-                if (screenX > -tree.width && screenX < canvas.width && screenY > -tree.height && screenY < canvas.height) {
-                    ctx.drawImage(sprites.tree, screenX, screenY);
-                }
-            });
-            // Made By PKAutuly02
-            // Draw rocks
-            rocks.forEach(rock => {
-                const screenX = rock.x - game.camera.x;
-                const screenY = rock.y - game.camera.y;
-                
-                if (screenX > -rock.width && screenX < canvas.width && screenY > -rock.height && screenY < canvas.height) {
-                    ctx.drawImage(sprites.rock, screenX, screenY);
-                }
-            });
-
-            // Draw items
-            items.forEach(item => {
-                const screenX = item.x - game.camera.x;
-                const screenY = item.y - game.camera.y;
-                
-                if (screenX > -item.width && screenX < canvas.width && screenY > -item.height && screenY < canvas.height) {
-                    // Add slight bobbing animation
-                    const bobOffset = Math.sin(Date.now() * 0.005 + item.x * 0.01) * 2;
-                    ctx.drawImage(sprites[item.sprite], screenX, screenY + bobOffset);
-                }
-            });
-
-            // Draw enemies
-            enemies.forEach(enemy => {
-                const screenX = enemy.x - game.camera.x;
-                const screenY = enemy.y - game.camera.y;
-                
-                if (screenX > -enemy.width && screenX < canvas.width && screenY > -enemy.height && screenY < canvas.height) {
-                    ctx.drawImage(sprites[enemy.sprite], screenX, screenY);
-                    
-                    // Health bar
-                    const hpPercent = enemy.hp / enemy.maxHp;
-                    ctx.fillStyle = '#FF0000';
-                    ctx.fillRect(screenX, screenY - 8, enemy.width, 4);
-                    ctx.fillStyle = '#00FF00';
-                    ctx.fillRect(screenX, screenY - 8, enemy.width * hpPercent, 4);
-                }
-            });
-
-            // Draw player
-            const screenX = player.x - game.camera.x;
-            const screenY = player.y - game.camera.y;
-            ctx.drawImage(sprites.player, screenX, screenY);
-
-            // Draw particles
-            particles.forEach(particle => {
-                const screenX = particle.x - game.camera.x;
-                const screenY = particle.y - game.camera.y;
-                
-                ctx.globalAlpha = particle.life;
-                ctx.fillStyle = particle.color;
-                ctx.fillRect(screenX, screenY, particle.size, particle.size);
-                ctx.globalAlpha = 1;
-            });
-        }
-
-        // Game loop
-        function gameLoop() {
-            updatePlayer();
-            updateEnemies();
-            updateItems();
-            updateParticles();
-            render();
-            updateUI();
-            requestAnimationFrame(gameLoop);
-        }
-
-        // Initialize game
-        initSprites();
-        generateWorld();
-        gameLoop();
-        // Made By PKAutuly02
-    </script>
+<div id="startScreen">
+<h1>⚔️ Dark Fantasy Explorer by Aadarsh</h1>
+<p>Explore mystical realms filled with ancient castles, enchanted forests, and magical crystals.</p>
+<button id="startBtn">Begin Adventure</button>
+</div>
+<div id="loadingScreen">
+<h2>🏰 Generating Realm...</h2>
+<p>Creating mystical landscapes...</p>
+<div class="spinner"></div>
+</div>
+<div id="ui">
+<div id="instructions">
+<div class="desktop"><strong>Controls:</strong><br>WASD - Move | Mouse - Look | E - Interact | Space - Jump</div>
+<div class="mobile" style="display:none;"><strong>Touch:</strong><br>Joystick - Move | Touch & drag - Look | Green - Jump</div>
+</div>
+<div id="crosshair"></div>
+<div id="prompt">Press E to open door</div>
+</div>
+<div id="mobileControls">
+<div id="joystick"><div id="joystickKnob"></div></div>
+<div id="interactBtn">E</div>
+<div id="jumpBtn">↑</div>
+</div>
+
+<script>
+// Made By PKAutuly02
+let scene,camera,renderer,player,world={chunks:new Map(),colliders:[],interactables:[]};
+let input={keys:{},mouse:{x:0,y:0},touch:{joystick:{active:false,x:0,y:0}},locked:false};
+let isMobile=/Android|iPhone|iPad/i.test(navigator.userAgent);
+let settings={moveSpeed:0.25,lookSpeed:0.003,chunkSize:120,renderDistance:2,jumpForce:0.4,gravity:-0.02};
+let state={playerChunk:{x:0,z:0},nearInteract:null,velocity:{x:0,y:0,z:0},isGrounded:false};
+
+document.getElementById('startBtn').addEventListener('click',startGame);
+
+function startGame(){
+document.getElementById('startScreen').style.display='none';
+document.getElementById('loadingScreen').style.display='flex';
+setTimeout(()=>{
+init();
+document.getElementById('loadingScreen').style.display='none';
+document.getElementById('ui').style.display='block';
+if(isMobile)document.getElementById('mobileControls').style.display='block';
+},2500);
+}
+
+function init(){
+renderer=new THREE.WebGLRenderer({antialias:!isMobile});
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.setClearColor(0x0a0a1a);
+renderer.shadowMap.enabled=!isMobile;
+document.body.appendChild(renderer.domElement);
+
+scene=new THREE.Scene();
+scene.fog=new THREE.Fog(0x1a1a2e,30,150);
+camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
+
+if(isMobile){
+document.querySelector('.desktop').style.display='none';
+document.querySelector('.mobile').style.display='block';
+}
+
+createPlayer();
+createEnvironment();
+generateWorld();
+setupControls();
+gameLoop();
+}
+
+function createPlayer(){
+player=new THREE.Group();
+player.position.set(0,2,0);
+scene.add(player);
+camera.position.set(0,1.7,0);
+player.add(camera);
+}
+
+function createEnvironment(){
+scene.add(new THREE.AmbientLight(0x4a4a7a,0.7));
+const moon=new THREE.Mesh(new THREE.SphereGeometry(25,32,32),new THREE.MeshBasicMaterial({color:0xffffff}));
+moon.position.set(400,500,-300);
+scene.add(moon);
+
+const moonLight=new THREE.DirectionalLight(0xffffff,1.5);
+moonLight.position.set(400,500,-300);
+moonLight.castShadow=!isMobile;
+if(!isMobile){
+moonLight.shadow.mapSize.setScalar(1024);
+moonLight.shadow.camera.near=1;
+moonLight.shadow.camera.far=600;
+moonLight.shadow.camera.left=moonLight.shadow.camera.bottom=-150;
+moonLight.shadow.camera.right=moonLight.shadow.camera.top=150;
+}
+scene.add(moonLight);
+}
+
+function generateChunk(chunkX,chunkZ){
+const key=`${chunkX},${chunkZ}`;
+if(world.chunks.has(key))return;
+
+const chunk=new THREE.Group();
+const offsetX=chunkX*settings.chunkSize;
+const offsetZ=chunkZ*settings.chunkSize;
+
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(settings.chunkSize,settings.chunkSize),new THREE.MeshLambertMaterial({color:0x2a3a4a}));
+ground.rotation.x=-Math.PI/2;
+ground.position.set(offsetX,0,offsetZ);
+ground.receiveShadow=true;
+chunk.add(ground);
+
+if(chunkX===1&&chunkZ===1){
+chunk.add(createCastle(offsetX-30,offsetZ-30));
+}
+
+if(!(chunkX===1&&chunkZ===1)){
+for(let i=0;i<(isMobile?8:15);i++){
+chunk.add(createTree(offsetX+(Math.random()-0.5)*settings.chunkSize*0.8,offsetZ+(Math.random()-0.5)*settings.chunkSize*0.8));
+}
+}
+
+if(Math.random()<0.3){
+const lake=new THREE.Mesh(new THREE.CircleGeometry(12+Math.random()*8,16),new THREE.MeshLambertMaterial({color:0x2a4a6a,transparent:true,opacity:0.8}));
+lake.rotation.x=-Math.PI/2;
+lake.position.set(offsetX+(Math.random()-0.5)*50,-0.8,offsetZ+(Math.random()-0.5)*50);
+chunk.add(lake);
+}
+
+for(let i=0;i<2;i++){
+const crystal=new THREE.Mesh(new THREE.OctahedronGeometry(0.4+Math.random()*0.2),new THREE.MeshLambertMaterial({color:new THREE.Color().setHSL(0.7+Math.random()*0.2,0.9,0.6),transparent:true,opacity:0.9}));
+crystal.position.set(offsetX+(Math.random()-0.5)*70,2+Math.random()*2,offsetZ+(Math.random()-0.5)*70);
+crystal.userData={rotSpeed:(Math.random()-0.5)*0.02,floatSpeed:0.008+Math.random()*0.008,baseY:crystal.position.y};
+chunk.add(crystal);
+}
+
+scene.add(chunk);
+world.chunks.set(key,chunk);
+}
+
+function createTree(x,z){
+const tree=new THREE.Group();
+const height=5+Math.random()*3;
+const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.5,height,6),new THREE.MeshLambertMaterial({color:0x2a1810}));
+trunk.position.y=height/2;
+trunk.castShadow=true;
+tree.add(trunk);
+
+const canopy=new THREE.Mesh(new THREE.SphereGeometry(2+Math.random()*0.5,6,6),new THREE.MeshLambertMaterial({color:new THREE.Color().setHSL(0.25,0.8,0.15+Math.random()*0.1)}));
+canopy.position.y=height+1.5;
+canopy.castShadow=true;
+tree.add(canopy);
+
+tree.position.set(x,0,z);
+world.colliders.push({x,z,radius:1.0});
+return tree;
+}
+
+function createCastle(x,z){
+const castle=new THREE.Group();
+
+// Main keep
+const keep=new THREE.Mesh(new THREE.BoxGeometry(25,60,25),new THREE.MeshLambertMaterial({color:0x3a3a5a}));
+keep.position.y=30;
+keep.castShadow=true;
+castle.add(keep);
+
+// Corner towers
+const towers=[[-30,-30],[30,-30],[-30,30],[30,30]];
+towers.forEach(([tx,tz])=>{
+const tower=new THREE.Mesh(new THREE.CylinderGeometry(6,8,65,12),new THREE.MeshLambertMaterial({color:0x4a4a6a}));
+tower.position.set(tx,32.5,tz);
+tower.castShadow=true;
+castle.add(tower);
+});
+
+// Connected outer walls - no gaps
+const wallRadius=35;
+for(let i=0;i<48;i++){
+const angle=(i/48)*Math.PI*2;
+if(i!==24&&i!==23&&i!==25){ // Skip front door area only
+const wall=new THREE.Mesh(new THREE.BoxGeometry(5,25,3),new THREE.MeshLambertMaterial({color:0x4a4a6a}));
+wall.position.set(Math.cos(angle)*wallRadius,12.5,Math.sin(angle)*wallRadius);
+wall.lookAt(x,12.5,z);
+wall.castShadow=true;
+castle.add(wall);
+}
+}
+
+// Gatehouse
+const gateLeft=new THREE.Mesh(new THREE.BoxGeometry(6,20,6),new THREE.MeshLambertMaterial({color:0x2a1a1a}));
+gateLeft.position.set(-6,10,-37);
+castle.add(gateLeft);
+
+const gateRight=new THREE.Mesh(new THREE.BoxGeometry(6,20,6),new THREE.MeshLambertMaterial({color:0x2a1a1a}));
+gateRight.position.set(6,10,-37);
+castle.add(gateRight);
+
+const gateTop=new THREE.Mesh(new THREE.BoxGeometry(12,6,6),new THREE.MeshLambertMaterial({color:0x2a1a1a}));
+gateTop.position.set(0,17,-37);
+castle.add(gateTop);
+
+// Outer doors
+const doorMat=new THREE.MeshLambertMaterial({color:0x8B4513});
+const openMat=new THREE.MeshLambertMaterial({color:0x654321});
+
+const leftDoor=new THREE.Mesh(new THREE.BoxGeometry(4,12,0.5),doorMat);
+leftDoor.position.set(-2.5,6,-39.5);
+leftDoor.userData={type:'door',isOpen:false,side:'left',origPos:{x:-2.5,y:6,z:-39.5},doorMat,openMat};
+castle.add(leftDoor);
+
+const rightDoor=new THREE.Mesh(new THREE.BoxGeometry(4,12,0.5),doorMat);
+rightDoor.position.set(2.5,6,-39.5);
+rightDoor.userData={type:'door',isOpen:false,side:'right',origPos:{x:2.5,y:6,z:-39.5},doorMat,openMat};
+castle.add(rightDoor);
+
+// Interior door
+const intDoor=new THREE.Mesh(new THREE.BoxGeometry(2.5,7,0.3),doorMat);
+intDoor.position.set(0,3.5,-15);
+intDoor.userData={type:'intDoor',isOpen:false,origPos:{x:0,y:3.5,z:-15},doorMat,openMat};
+castle.add(intDoor);
+
+castle.userData.interior=null;
+castle.userData.createInterior=()=>createCastleInterior(castle);
+
+world.interactables.push(
+{object:leftDoor,position:{x:x-2.5,z:z-39.5},radius:6,action:()=>toggleDoor(leftDoor)},
+{object:rightDoor,position:{x:x+2.5,z:z-39.5},radius:6,action:()=>toggleDoor(rightDoor)},
+{object:intDoor,position:{x:x,z:z-15},radius:4,action:()=>toggleDoor(intDoor)}
+);
+
+castle.position.set(x,0,z);
+
+// Fixed colliders
+world.colliders.push({x,z,radius:13}); // Keep
+towers.forEach(([tx,tz])=>world.colliders.push({x:x+tx,z:z+tz,radius:8})); // Towers
+
+// Wall colliders - continuous
+for(let i=0;i<48;i++){
+const angle=(i/48)*Math.PI*2;
+if(i!==24&&i!==23&&i!==25){
+world.colliders.push({x:x+Math.cos(angle)*wallRadius,z:z+Math.sin(angle)*wallRadius,radius:2.8});
+}
+}
+
+return castle;
+}
+
+function createCastleInterior(castle){
+if(castle.userData.interior)return castle.userData.interior;
+
+const interior=new THREE.Group();
+
+// Main floor
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(45,45),new THREE.MeshLambertMaterial({color:0x2a2a3a}));
+floor.rotation.x=-Math.PI/2;
+floor.position.y=1;
+interior.add(floor);
+
+// Upper floor
+const upperFloor=new THREE.Mesh(new THREE.PlaneGeometry(20,20),new THREE.MeshLambertMaterial({color:0x2a2a3a}));
+upperFloor.rotation.x=-Math.PI/2;
+upperFloor.position.y=15;
+interior.add(upperFloor);
+
+// Working stairs
+for(let i=0;i<15;i++){
+const step=new THREE.Mesh(new THREE.BoxGeometry(4,1,2),new THREE.MeshLambertMaterial({color:0x3a3a3a}));
+step.position.set(12,1.5+i*0.93,-10+i*1.3);
+interior.add(step);
+}
+
+// Pillars
+for(let i=0;i<6;i++){
+const pillar=new THREE.Mesh(new THREE.CylinderGeometry(1,1.2,25),new THREE.MeshLambertMaterial({color:0x4a4a5a}));
+const angle=(i/6)*Math.PI*2;
+pillar.position.set(Math.cos(angle)*10,13,Math.sin(angle)*10);
+interior.add(pillar);
+}
+
+// Throne
+const throne=new THREE.Mesh(new THREE.BoxGeometry(3,5,2),new THREE.MeshLambertMaterial({color:0x6a4a2a}));
+throne.position.set(0,3.5,18);
+interior.add(throne);
+
+// Interior lights
+const lights=[{pos:[0,20,0],intensity:1.2},{pos:[0,18,15],intensity:1.0}];
+lights.forEach(light=>{
+const pointLight=new THREE.PointLight(0xffaa44,light.intensity,35);
+pointLight.position.set(...light.pos);
+interior.add(pointLight);
+});
+
+castle.userData.interior=interior;
+castle.add(interior);
+return interior;
+}
+
+function toggleDoor(door){
+const move=door.userData.side==='left'?-5:door.userData.side==='right'?5:-3;
+
+if(!door.userData.isOpen){
+door.position.x+=move;
+if(door.userData.type!=='intDoor')door.position.z+=2;
+door.material=door.userData.openMat;
+door.userData.isOpen=true;
+}else{
+door.position.x=door.userData.origPos.x;
+door.position.y=door.userData.origPos.y;
+door.position.z=door.userData.origPos.z;
+door.material=door.userData.doorMat;
+door.userData.isOpen=false;
+}
+}
+
+function generateWorld(){
+for(let x=-settings.renderDistance;x<=settings.renderDistance;x++){
+for(let z=-settings.renderDistance;z<=settings.renderDistance;z++){
+generateChunk(x,z);
+}
+}
+}
+
+function updateWorld(){
+const chunkX=Math.floor(player.position.x/settings.chunkSize);
+const chunkZ=Math.floor(player.position.z/settings.chunkSize);
+
+if(chunkX!==state.playerChunk.x||chunkZ!==state.playerChunk.z){
+state.playerChunk={x:chunkX,z:chunkZ};
+
+for(let x=chunkX-settings.renderDistance;x<=chunkX+settings.renderDistance;x++){
+for(let z=chunkZ-settings.renderDistance;z<=chunkZ+settings.renderDistance;z++){
+generateChunk(x,z);
+}
+}
+
+for(let [key,chunk] of world.chunks.entries()){
+const [cx,cz]=key.split(',').map(Number);
+if(Math.abs(cx-chunkX)>settings.renderDistance||Math.abs(cz-chunkZ)>settings.renderDistance){
+scene.remove(chunk);
+world.chunks.delete(key);
+}
+}
+}
+
+// Castle interior management - preload at distance
+for(let [key,chunk] of world.chunks.entries()){
+chunk.children.forEach(child=>{
+if(child.userData&&child.userData.createInterior){
+const castlePos=child.position;
+const distToCastle=Math.sqrt(Math.pow(player.position.x-castlePos.x,2)+Math.pow(player.position.z-castlePos.z,2));
+
+if(distToCastle<70&&!child.userData.interior){ // Create early
+child.userData.createInterior();
+child.userData.interior.visible=false; // Hide initially
+}
+
+if(child.userData.interior){
+child.userData.interior.visible=distToCastle<50; // Show when closer
+}
+}
+});
+}
+}
+
+function checkCollision(newPos){
+const groundY=player.position.y<=2?0:player.position.y;
+if(newPos.y<groundY)return true;
+return world.colliders.some(c=>Math.sqrt((newPos.x-c.x)**2+(newPos.z-c.z)**2)<c.radius+0.4);
+}
+
+function checkInteractions(){
+const prompt=document.getElementById('prompt');
+const btn=document.getElementById('interactBtn');
+
+state.nearInteract=world.interactables.find(i=>Math.sqrt((player.position.x-i.position.x)**2+(player.position.z-i.position.z)**2)<i.radius);
+
+if(state.nearInteract){
+prompt.textContent=state.nearInteract.object.userData.isOpen?'Press E to close':'Press E to open';
+prompt.style.display='block';
+if(isMobile)btn.style.display='flex';
+}else{
+prompt.style.display='none';
+if(isMobile)btn.style.display='none';
+}
+}
+
+function jump(){
+if(state.isGrounded){
+state.velocity.y=settings.jumpForce;
+state.isGrounded=false;
+}
+}
+
+function setupControls(){
+document.addEventListener('keydown',e=>{
+input.keys[e.code]=true;
+if(e.code==='KeyE'&&state.nearInteract)state.nearInteract.action();
+if(e.code==='Space'){e.preventDefault();jump();}
+});
+document.addEventListener('keyup',e=>input.keys[e.code]=false);
+
+if(isMobile){
+document.getElementById('interactBtn').addEventListener('touchstart',e=>{
+e.preventDefault();
+if(state.nearInteract)state.nearInteract.action();
+});
+document.getElementById('jumpBtn').addEventListener('touchstart',e=>{
+e.preventDefault();
+jump();
+});
+setupMobile();
+}else{
+document.addEventListener('click',()=>!input.locked&&renderer.domElement.requestPointerLock());
+document.addEventListener('pointerlockchange',()=>input.locked=document.pointerLockElement===renderer.domElement);
+document.addEventListener('mousemove',e=>{
+if(input.locked){
+input.mouse.x+=e.movementX*settings.lookSpeed;
+input.mouse.y-=e.movementY*settings.lookSpeed;
+input.mouse.y=Math.max(-Math.PI/2,Math.min(Math.PI/2,input.mouse.y));
+}
+});
+}
+}
+
+function setupMobile(){
+const joystick=document.getElementById('joystick');
+const knob=document.getElementById('joystickKnob');
+let joyId=null;
+
+document.addEventListener('touchstart',e=>e.preventDefault(),{passive:false});
+document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+
+joystick.addEventListener('touchstart',e=>{
+if(!joyId){joyId=e.changedTouches[0].identifier;input.touch.joystick.active=true;}
+});
+
+document.addEventListener('touchmove',e=>{
+for(let touch of e.changedTouches){
+if(touch.identifier===joyId){
+const rect=joystick.getBoundingClientRect();
+const centerX=rect.left+rect.width/2;
+const centerY=rect.top+rect.height/2;
+const maxDist=rect.width*0.35;
+
+let deltaX=touch.clientX-centerX;
+let deltaY=touch.clientY-centerY;
+const dist=Math.sqrt(deltaX**2+deltaY**2);
+
+if(dist>maxDist){
+deltaX=(deltaX/dist)*maxDist;
+deltaY=(deltaY/dist)*maxDist;
+}
+
+input.touch.joystick.x=deltaX/maxDist;
+input.touch.joystick.y=deltaY/maxDist;
+knob.style.transform=`translate(calc(-50% + ${deltaX}px), calc(-50% + ${deltaY}px))`;
+}else{
+const key=`look_${touch.identifier}`;
+if(input.touch[key]){
+input.mouse.x-=(touch.clientX-input.touch[key].lastX)*settings.lookSpeed*2;
+input.mouse.y-=(touch.clientY-input.touch[key].lastY)*settings.lookSpeed*2;
+input.mouse.y=Math.max(-Math.PI/2,Math.min(Math.PI/2,input.mouse.y));
+input.touch[key]={lastX:touch.clientX,lastY:touch.clientY};
+}
+}
+}
+});
+
+document.addEventListener('touchstart',e=>{
+for(let touch of e.changedTouches){
+if(touch.identifier!==joyId){
+input.touch[`look_${touch.identifier}`]={lastX:touch.clientX,lastY:touch.clientY};
+}
+}
+});
+
+document.addEventListener('touchend',e=>{
+for(let touch of e.changedTouches){
+if(touch.identifier===joyId){
+joyId=null;
+input.touch.joystick.active=false;
+input.touch.joystick.x=0;
+input.touch.joystick.y=0;
+knob.style.transform='translate(-50%, -50%)';
+}else{
+delete input.touch[`look_${touch.identifier}`];
+}
+}
+});
+}
+
+function updatePlayer(){
+const dir=new THREE.Vector3();
+
+if(input.keys['KeyW'])dir.z-=1;
+if(input.keys['KeyS'])dir.z+=1;
+if(input.keys['KeyA'])dir.x-=1;
+if(input.keys['KeyD'])dir.x+=1;
+
+if(input.touch.joystick.active){
+dir.x+=input.touch.joystick.x;
+dir.z+=input.touch.joystick.y;
+}
+
+if(dir.length()>0){
+dir.normalize().multiplyScalar(settings.moveSpeed);
+dir.applyQuaternion(player.quaternion);
+const newPos=player.position.clone().add(dir);
+if(!checkCollision(newPos))player.position.copy(newPos);
+}
+
+// Physics
+state.velocity.y+=settings.gravity;
+const newY=player.position.y+state.velocity.y;
+
+if(newY<=2){
+player.position.y=2;
+state.velocity.y=0;
+state.isGrounded=true;
+}else{
+player.position.y=newY;
+state.isGrounded=false;
+}
+
+player.rotation.y=input.mouse.x;
+camera.rotation.x=input.mouse.y;
+}
+
+function animateWorld(){
+for(let [key,chunk] of world.chunks.entries()){
+chunk.children.forEach(child=>{
+if(child.userData&&child.userData.rotSpeed){
+child.rotation.y+=child.userData.rotSpeed;
+child.position.y=child.userData.baseY+Math.sin(Date.now()*child.userData.floatSpeed)*0.3;
+}
+});
+}
+}
+
+function gameLoop(){
+requestAnimationFrame(gameLoop);
+updatePlayer();
+updateWorld();
+checkInteractions();
+animateWorld();
+renderer.render(scene,camera);
+}
+// Made By Sv. Aadarsh Aaryan
+        </script>
     <!-- Credit Section -->
 <div style="position:fixed; top:10px; right:10px; 
   background:rgba(0,0,0,0.5); 
@@ -1001,6 +604,7 @@
 document.getElementById('more-button').addEventListener('click', function() {
   alert('Let's know more about Sv. Aadarsh Aaryan 🤩');
 });
-</script>   
+</script>  
+</script>
 </body>
 </html>
