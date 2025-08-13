@@ -3,608 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="LFrbNrn-QMY0TYg3V0MrZ7Kn23s_XTx2z6gmq3urJFA" />
-    <title>Dark Fantasy Explorer by Aadarsh</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<style>
-body{margin:0;overflow:hidden;background:#000;font-family:monospace;touch-action:none;user-select:none}
-#startScreen{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#1a1a2e,#2a2a4a,#3a3a5a);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:200}
-#startScreen h1{color:#fff;font-size:42px;margin-bottom:20px;text-shadow:0 0 20px #fff}
-#startScreen p{color:#ccc;font-size:16px;margin-bottom:30px;text-align:center;max-width:400px}
-#startBtn{background:#4a4a7a;color:#fff;border:3px solid #6a6a9a;padding:12px 30px;font-size:18px;font-family:monospace;border-radius:8px;cursor:pointer;transition:all 0.3s}
-#startBtn:hover{background:#6a6a9a;transform:scale(1.05)}
-#loadingScreen{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#0a0a1a,#1a1a2a);display:none;flex-direction:column;justify-content:center;align-items:center;z-index:200}
-#loadingScreen h2{color:#fff;font-size:28px;margin-bottom:15px}
-#loadingScreen p{color:#aaa;font-size:14px;margin-bottom:25px}
-.spinner{width:50px;height:50px;border:4px solid rgba(255,255,255,0.3);border-top:4px solid #fff;border-radius:50%;animation:spin 1s linear infinite}
-@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-#ui{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:100;display:none}
-#instructions{position:absolute;top:15px;left:15px;color:#fff;font-size:12px;background:rgba(0,0,0,0.8);padding:10px;border-radius:6px;max-width:250px}
-#crosshair{position:absolute;top:50%;left:50%;width:4px;height:4px;background:#fff;border:1px solid #000;transform:translate(-50%,-50%);border-radius:50%}
-#prompt{position:absolute;bottom:60%;left:50%;transform:translateX(-50%);color:#fff;font-size:14px;background:rgba(0,0,0,0.9);padding:10px 18px;border-radius:15px;display:none}
-#mobileControls{position:fixed;bottom:0;left:0;right:0;height:140px;display:none;pointer-events:none}
-#joystick{position:absolute;bottom:15px;left:15px;width:70px;height:70px;background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.4);border-radius:50%;pointer-events:all}
-#joystickKnob{position:absolute;top:50%;left:50%;width:20px;height:20px;background:rgba(255,255,255,0.8);border-radius:50%;transform:translate(-50%,-50%)}
-#interactBtn{position:absolute;bottom:15px;right:15px;width:45px;height:45px;background:rgba(255,50,50,0.9);border:2px solid rgba(255,255,255,0.8);border-radius:50%;color:white;font-size:14px;font-weight:bold;display:none;justify-content:center;align-items:center;pointer-events:all}
-#jumpBtn{position:absolute;bottom:15px;right:70px;width:45px;height:45px;background:rgba(50,255,50,0.9);border:2px solid rgba(255,255,255,0.8);border-radius:50%;color:white;font-size:12px;font-weight:bold;display:flex;justify-content:center;align-items:center;pointer-events:all}
-</style>
+    <title>Sv. Aadarsh Aaryan | Developer & Artist</title>
+    <style>
+        /* ---------------------------
+           GENERAL RESET & VARIABLES
+        ---------------------------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #0d0d0d; /* Main background */
+            --text-color: #ffffff; /* Main text color */
+            --accent-color: #00e6b8; /* Highlight color */
+            --secondary-color: #1a1a1a; /* Section background */
+            --font-heading: 'Segoe UI', sans-serif;
+            --font-body: 'Roboto', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth; /* Smooth scroll for nav links */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-body);
+            line-height: 1.6;
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        /* ---------------------------
+           NAVIGATION BAR
+        ---------------------------- */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(13, 13, 13, 0.9);
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1rem 0;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        nav a {
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        /* ---------------------------
+           HERO SECTION
+        ---------------------------- */
+        #hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+            text-align: center;
+            padding: 0 2rem;
+        }
+
+        #hero h1 {
+            font-size: 3rem;
+            font-family: var(--font-heading);
+            opacity: 0;
+            animation: fadeIn 2s ease forwards;
+        }
+
+        #hero p {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            opacity: 0;
+            animation: slideUp 2s ease forwards;
+            animation-delay: 1s;
+        }
+
+        .social-links {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .social-links a {
+            border: 2px solid var(--accent-color);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--accent-color);
+            color: #000;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* ---------------------------
+           SECTION STYLING
+        ---------------------------- */
+        section {
+            padding: 5rem 2rem;
+            background-color: var(--secondary-color);
+            margin: 2rem 0;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0; /* Hidden initially */
+            transform: translateY(30px); /* Start below */
+            transition: all 0.8s ease; /* Smooth fade-in */
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .skill {
+            background-color: var(--bg-color);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .project {
+            background-color: var(--bg-color);
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        /* ---------------------------
+           CONTACT SECTION
+        ---------------------------- */
+        #contact p {
+            margin-bottom: 1rem;
+        }
+
+        /* ---------------------------
+           FOOTER
+        ---------------------------- */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background-color: #0d0d0d;
+            color: #aaa;
+        }
+    </style>
 </head>
 <body>
-<div id="startScreen">
-<h1>⚔️ Dark Fantasy Explorer by Aadarsh</h1>
-<p>Explore mystical realms filled with ancient castles, enchanted forests, and magical crystals.</p>
-<button id="startBtn">Begin Adventure</button>
-</div>
-<div id="loadingScreen">
-<h2>🏰 Generating Realm...</h2>
-<p>Creating mystical landscapes...</p>
-<div class="spinner"></div>
-</div>
-<div id="ui">
-<div id="instructions">
-<div class="desktop"><strong>Controls:</strong><br>WASD - Move | Mouse - Look | E - Interact | Space - Jump</div>
-<div class="mobile" style="display:none;"><strong>Touch:</strong><br>Joystick - Move | <br>Touch & drag - Look<br>| Green - Jump</div>
-</div>
-<div id="crosshair"></div>
-<div id="prompt">Press E to open door</div>
-</div>
-<div id="mobileControls">
-<div id="joystick"><div id="joystickKnob"></div></div>
-<div id="interactBtn">E</div>
-<div id="jumpBtn">↑</div>
-</div>
 
-<script>
-// Made By PKAutuly02
-let scene,camera,renderer,player,world={chunks:new Map(),colliders:[],interactables:[]};
-let input={keys:{},mouse:{x:0,y:0},touch:{joystick:{active:false,x:0,y:0}},locked:false};
-let isMobile=/Android|iPhone|iPad/i.test(navigator.userAgent);
-let settings={moveSpeed:0.25,lookSpeed:0.003,chunkSize:120,renderDistance:2,jumpForce:0.4,gravity:-0.02};
-let state={playerChunk:{x:0,z:0},nearInteract:null,velocity:{x:0,y:0,z:0},isGrounded:false};
+    <!-- Navigation Bar -->
+    <nav>
+        <a href="#hero">Home</a>
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <h1>Sv. Aadarsh Aaryan</h1>
+        <p>Developer and Artist</p>
+        <div class="social-links">
+            <a href="https://instagram.com/aadarshaaryan.official" target="_blank">Instagram</a>
+            <a href="https://youtube.com/@neuralboss" target="_blank">YouTube</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <h2>About Me</h2>
+        <p>I am a passionate developer and artist, blending technical skills with creativity to craft engaging digital experiences. As a student and public figure, I aim to inspire and innovate.</p>
+        <h3>Technical Skills</h3>
+        <div class="skills-list">
+            <div class="skill">Programming</div>
+            <div class="skill">Web Development</div>
+            <div class="skill">App Development</div>
+            <div class="skill">Social Media Influence</div>
+        </div>
+        <h3>Creative Skills</h3>
+        <div class="skills-list">
+            <div class="skill">Public Figure Branding</div>
+            <div class="skill">Digital Art</div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+        <h2>Projects</h2>
+        <div class="projects-grid">
+            <div class="project">Project Placeholder 1</div>
+            <div class="project">Project Placeholder 2</div>
+            <div class="project">Project Placeholder 3</div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2>Contact Me</h2>
+        <p>Let’s work together or just say hello.</p>
+        <p>Email: <a href="mailto:your-email@example.com">your-email@example.com</a></p>
+        <p>Instagram: <a href="https://instagram.com/aadarshaaryan.official" target="_blank">@aadarshaaryan.official</a></p>
+        <p>YouTube: <a href="https://youtube.com/@neuralboss" target="_blank">@neuralboss</a></p>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Sv. Aadarsh Aaryan. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript for Scroll Animations -->
+    <script>
+        // Function to reveal sections when they enter the viewport
+        function revealSections() {
+            const sections = document.querySelectorAll("section");
+            const triggerPoint = window.innerHeight * 0.8;
+
+            sections.forEach(section => {
+                const sectionTop = section.getBoundingClientRect().top;
+
+                if (sectionTop < triggerPoint) {
+                    section.classList.add("visible");
+                }
+            });
+        }
+
+        // Run on scroll and on load
+        window.addEventListener("scroll", revealSections);
+        window.addEventListener("load", revealSections);
+    </script>
 
-document.getElementById('startBtn').addEventListener('click',startGame);
-
-function startGame(){
-document.getElementById('startScreen').style.display='none';
-document.getElementById('loadingScreen').style.display='flex';
-setTimeout(()=>{
-init();
-document.getElementById('loadingScreen').style.display='none';
-document.getElementById('ui').style.display='block';
-if(isMobile)document.getElementById('mobileControls').style.display='block';
-},2500);
-}
-
-function init(){
-renderer=new THREE.WebGLRenderer({antialias:!isMobile});
-renderer.setSize(window.innerWidth,window.innerHeight);
-renderer.setClearColor(0x0a0a1a);
-renderer.shadowMap.enabled=!isMobile;
-document.body.appendChild(renderer.domElement);
-
-scene=new THREE.Scene();
-scene.fog=new THREE.Fog(0x1a1a2e,30,150);
-camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
-
-if(isMobile){
-document.querySelector('.desktop').style.display='none';
-document.querySelector('.mobile').style.display='block';
-}
-
-createPlayer();
-createEnvironment();
-generateWorld();
-setupControls();
-gameLoop();
-}
-
-function createPlayer(){
-player=new THREE.Group();
-player.position.set(0,2,0);
-scene.add(player);
-camera.position.set(0,1.7,0);
-player.add(camera);
-}
-
-function createEnvironment(){
-scene.add(new THREE.AmbientLight(0x4a4a7a,0.7));
-const moon=new THREE.Mesh(new THREE.SphereGeometry(25,32,32),new THREE.MeshBasicMaterial({color:0xffffff}));
-moon.position.set(400,500,-300);
-scene.add(moon);
-
-const moonLight=new THREE.DirectionalLight(0xffffff,1.5);
-moonLight.position.set(400,500,-300);
-moonLight.castShadow=!isMobile;
-if(!isMobile){
-moonLight.shadow.mapSize.setScalar(1024);
-moonLight.shadow.camera.near=1;
-moonLight.shadow.camera.far=600;
-moonLight.shadow.camera.left=moonLight.shadow.camera.bottom=-150;
-moonLight.shadow.camera.right=moonLight.shadow.camera.top=150;
-}
-scene.add(moonLight);
-}
-
-function generateChunk(chunkX,chunkZ){
-const key=`${chunkX},${chunkZ}`;
-if(world.chunks.has(key))return;
-
-const chunk=new THREE.Group();
-const offsetX=chunkX*settings.chunkSize;
-const offsetZ=chunkZ*settings.chunkSize;
-
-const ground=new THREE.Mesh(new THREE.PlaneGeometry(settings.chunkSize,settings.chunkSize),new THREE.MeshLambertMaterial({color:0x2a3a4a}));
-ground.rotation.x=-Math.PI/2;
-ground.position.set(offsetX,0,offsetZ);
-ground.receiveShadow=true;
-chunk.add(ground);
-
-if(chunkX===1&&chunkZ===1){
-chunk.add(createCastle(offsetX-30,offsetZ-30));
-}
-
-if(!(chunkX===1&&chunkZ===1)){
-for(let i=0;i<(isMobile?8:15);i++){
-chunk.add(createTree(offsetX+(Math.random()-0.5)*settings.chunkSize*0.8,offsetZ+(Math.random()-0.5)*settings.chunkSize*0.8));
-}
-}
-
-if(Math.random()<0.3){
-const lake=new THREE.Mesh(new THREE.CircleGeometry(12+Math.random()*8,16),new THREE.MeshLambertMaterial({color:0x2a4a6a,transparent:true,opacity:0.8}));
-lake.rotation.x=-Math.PI/2;
-lake.position.set(offsetX+(Math.random()-0.5)*50,-0.8,offsetZ+(Math.random()-0.5)*50);
-chunk.add(lake);
-}
-
-for(let i=0;i<2;i++){
-const crystal=new THREE.Mesh(new THREE.OctahedronGeometry(0.4+Math.random()*0.2),new THREE.MeshLambertMaterial({color:new THREE.Color().setHSL(0.7+Math.random()*0.2,0.9,0.6),transparent:true,opacity:0.9}));
-crystal.position.set(offsetX+(Math.random()-0.5)*70,2+Math.random()*2,offsetZ+(Math.random()-0.5)*70);
-crystal.userData={rotSpeed:(Math.random()-0.5)*0.02,floatSpeed:0.008+Math.random()*0.008,baseY:crystal.position.y};
-chunk.add(crystal);
-}
-
-scene.add(chunk);
-world.chunks.set(key,chunk);
-}
-
-function createTree(x,z){
-const tree=new THREE.Group();
-const height=5+Math.random()*3;
-const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.5,height,6),new THREE.MeshLambertMaterial({color:0x2a1810}));
-trunk.position.y=height/2;
-trunk.castShadow=true;
-tree.add(trunk);
-
-const canopy=new THREE.Mesh(new THREE.SphereGeometry(2+Math.random()*0.5,6,6),new THREE.MeshLambertMaterial({color:new THREE.Color().setHSL(0.25,0.8,0.15+Math.random()*0.1)}));
-canopy.position.y=height+1.5;
-canopy.castShadow=true;
-tree.add(canopy);
-
-tree.position.set(x,0,z);
-world.colliders.push({x,z,radius:1.0});
-return tree;
-}
-
-function createCastle(x,z){
-const castle=new THREE.Group();
-
-// Main keep
-const keep=new THREE.Mesh(new THREE.BoxGeometry(25,60,25),new THREE.MeshLambertMaterial({color:0x3a3a5a}));
-keep.position.y=30;
-keep.castShadow=true;
-castle.add(keep);
-
-// Corner towers
-const towers=[[-30,-30],[30,-30],[-30,30],[30,30]];
-towers.forEach(([tx,tz])=>{
-const tower=new THREE.Mesh(new THREE.CylinderGeometry(6,8,65,12),new THREE.MeshLambertMaterial({color:0x4a4a6a}));
-tower.position.set(tx,32.5,tz);
-tower.castShadow=true;
-castle.add(tower);
-});
-
-// Connected outer walls - no gaps
-const wallRadius=35;
-for(let i=0;i<48;i++){
-const angle=(i/48)*Math.PI*2;
-if(i!==24&&i!==23&&i!==25){ // Skip front door area only
-const wall=new THREE.Mesh(new THREE.BoxGeometry(5,25,3),new THREE.MeshLambertMaterial({color:0x4a4a6a}));
-wall.position.set(Math.cos(angle)*wallRadius,12.5,Math.sin(angle)*wallRadius);
-wall.lookAt(x,12.5,z);
-wall.castShadow=true;
-castle.add(wall);
-}
-}
-
-// Gatehouse
-const gateLeft=new THREE.Mesh(new THREE.BoxGeometry(6,20,6),new THREE.MeshLambertMaterial({color:0x2a1a1a}));
-gateLeft.position.set(-6,10,-37);
-castle.add(gateLeft);
-
-const gateRight=new THREE.Mesh(new THREE.BoxGeometry(6,20,6),new THREE.MeshLambertMaterial({color:0x2a1a1a}));
-gateRight.position.set(6,10,-37);
-castle.add(gateRight);
-
-const gateTop=new THREE.Mesh(new THREE.BoxGeometry(12,6,6),new THREE.MeshLambertMaterial({color:0x2a1a1a}));
-gateTop.position.set(0,17,-37);
-castle.add(gateTop);
-
-// Outer doors
-const doorMat=new THREE.MeshLambertMaterial({color:0x8B4513});
-const openMat=new THREE.MeshLambertMaterial({color:0x654321});
-
-const leftDoor=new THREE.Mesh(new THREE.BoxGeometry(4,12,0.5),doorMat);
-leftDoor.position.set(-2.5,6,-39.5);
-leftDoor.userData={type:'door',isOpen:false,side:'left',origPos:{x:-2.5,y:6,z:-39.5},doorMat,openMat};
-castle.add(leftDoor);
-
-const rightDoor=new THREE.Mesh(new THREE.BoxGeometry(4,12,0.5),doorMat);
-rightDoor.position.set(2.5,6,-39.5);
-rightDoor.userData={type:'door',isOpen:false,side:'right',origPos:{x:2.5,y:6,z:-39.5},doorMat,openMat};
-castle.add(rightDoor);
-
-// Interior door
-const intDoor=new THREE.Mesh(new THREE.BoxGeometry(2.5,7,0.3),doorMat);
-intDoor.position.set(0,3.5,-15);
-intDoor.userData={type:'intDoor',isOpen:false,origPos:{x:0,y:3.5,z:-15},doorMat,openMat};
-castle.add(intDoor);
-
-castle.userData.interior=null;
-castle.userData.createInterior=()=>createCastleInterior(castle);
-
-world.interactables.push(
-{object:leftDoor,position:{x:x-2.5,z:z-39.5},radius:6,action:()=>toggleDoor(leftDoor)},
-{object:rightDoor,position:{x:x+2.5,z:z-39.5},radius:6,action:()=>toggleDoor(rightDoor)},
-{object:intDoor,position:{x:x,z:z-15},radius:4,action:()=>toggleDoor(intDoor)}
-);
-
-castle.position.set(x,0,z);
-
-// Fixed colliders
-world.colliders.push({x,z,radius:13}); // Keep
-towers.forEach(([tx,tz])=>world.colliders.push({x:x+tx,z:z+tz,radius:8})); // Towers
-
-// Wall colliders - continuous
-for(let i=0;i<48;i++){
-const angle=(i/48)*Math.PI*2;
-if(i!==24&&i!==23&&i!==25){
-world.colliders.push({x:x+Math.cos(angle)*wallRadius,z:z+Math.sin(angle)*wallRadius,radius:2.8});
-}
-}
-
-return castle;
-}
-
-function createCastleInterior(castle){
-if(castle.userData.interior)return castle.userData.interior;
-
-const interior=new THREE.Group();
-
-// Main floor
-const floor=new THREE.Mesh(new THREE.PlaneGeometry(45,45),new THREE.MeshLambertMaterial({color:0x2a2a3a}));
-floor.rotation.x=-Math.PI/2;
-floor.position.y=1;
-interior.add(floor);
-
-// Upper floor
-const upperFloor=new THREE.Mesh(new THREE.PlaneGeometry(20,20),new THREE.MeshLambertMaterial({color:0x2a2a3a}));
-upperFloor.rotation.x=-Math.PI/2;
-upperFloor.position.y=15;
-interior.add(upperFloor);
-
-// Working stairs
-for(let i=0;i<15;i++){
-const step=new THREE.Mesh(new THREE.BoxGeometry(4,1,2),new THREE.MeshLambertMaterial({color:0x3a3a3a}));
-step.position.set(12,1.5+i*0.93,-10+i*1.3);
-interior.add(step);
-}
-
-// Pillars
-for(let i=0;i<6;i++){
-const pillar=new THREE.Mesh(new THREE.CylinderGeometry(1,1.2,25),new THREE.MeshLambertMaterial({color:0x4a4a5a}));
-const angle=(i/6)*Math.PI*2;
-pillar.position.set(Math.cos(angle)*10,13,Math.sin(angle)*10);
-interior.add(pillar);
-}
-
-// Throne
-const throne=new THREE.Mesh(new THREE.BoxGeometry(3,5,2),new THREE.MeshLambertMaterial({color:0x6a4a2a}));
-throne.position.set(0,3.5,18);
-interior.add(throne);
-
-// Interior lights
-const lights=[{pos:[0,20,0],intensity:1.2},{pos:[0,18,15],intensity:1.0}];
-lights.forEach(light=>{
-const pointLight=new THREE.PointLight(0xffaa44,light.intensity,35);
-pointLight.position.set(...light.pos);
-interior.add(pointLight);
-});
-
-castle.userData.interior=interior;
-castle.add(interior);
-return interior;
-}
-
-function toggleDoor(door){
-const move=door.userData.side==='left'?-5:door.userData.side==='right'?5:-3;
-
-if(!door.userData.isOpen){
-door.position.x+=move;
-if(door.userData.type!=='intDoor')door.position.z+=2;
-door.material=door.userData.openMat;
-door.userData.isOpen=true;
-}else{
-door.position.x=door.userData.origPos.x;
-door.position.y=door.userData.origPos.y;
-door.position.z=door.userData.origPos.z;
-door.material=door.userData.doorMat;
-door.userData.isOpen=false;
-}
-}
-
-function generateWorld(){
-for(let x=-settings.renderDistance;x<=settings.renderDistance;x++){
-for(let z=-settings.renderDistance;z<=settings.renderDistance;z++){
-generateChunk(x,z);
-}
-}
-}
-
-function updateWorld(){
-const chunkX=Math.floor(player.position.x/settings.chunkSize);
-const chunkZ=Math.floor(player.position.z/settings.chunkSize);
-
-if(chunkX!==state.playerChunk.x||chunkZ!==state.playerChunk.z){
-state.playerChunk={x:chunkX,z:chunkZ};
-
-for(let x=chunkX-settings.renderDistance;x<=chunkX+settings.renderDistance;x++){
-for(let z=chunkZ-settings.renderDistance;z<=chunkZ+settings.renderDistance;z++){
-generateChunk(x,z);
-}
-}
-
-for(let [key,chunk] of world.chunks.entries()){
-const [cx,cz]=key.split(',').map(Number);
-if(Math.abs(cx-chunkX)>settings.renderDistance||Math.abs(cz-chunkZ)>settings.renderDistance){
-scene.remove(chunk);
-world.chunks.delete(key);
-}
-}
-}
-
-// Castle interior management - preload at distance
-for(let [key,chunk] of world.chunks.entries()){
-chunk.children.forEach(child=>{
-if(child.userData&&child.userData.createInterior){
-const castlePos=child.position;
-const distToCastle=Math.sqrt(Math.pow(player.position.x-castlePos.x,2)+Math.pow(player.position.z-castlePos.z,2));
-
-if(distToCastle<70&&!child.userData.interior){ // Create early
-child.userData.createInterior();
-child.userData.interior.visible=false; // Hide initially
-}
-
-if(child.userData.interior){
-child.userData.interior.visible=distToCastle<50; // Show when closer
-}
-}
-});
-}
-}
-
-function checkCollision(newPos){
-const groundY=player.position.y<=2?0:player.position.y;
-if(newPos.y<groundY)return true;
-return world.colliders.some(c=>Math.sqrt((newPos.x-c.x)**2+(newPos.z-c.z)**2)<c.radius+0.4);
-}
-
-function checkInteractions(){
-const prompt=document.getElementById('prompt');
-const btn=document.getElementById('interactBtn');
-
-state.nearInteract=world.interactables.find(i=>Math.sqrt((player.position.x-i.position.x)**2+(player.position.z-i.position.z)**2)<i.radius);
-
-if(state.nearInteract){
-prompt.textContent=state.nearInteract.object.userData.isOpen?'Press E to close':'Press E to open';
-prompt.style.display='block';
-if(isMobile)btn.style.display='flex';
-}else{
-prompt.style.display='none';
-if(isMobile)btn.style.display='none';
-}
-}
-
-function jump(){
-if(state.isGrounded){
-state.velocity.y=settings.jumpForce;
-state.isGrounded=false;
-}
-}
-
-function setupControls(){
-document.addEventListener('keydown',e=>{
-input.keys[e.code]=true;
-if(e.code==='KeyE'&&state.nearInteract)state.nearInteract.action();
-if(e.code==='Space'){e.preventDefault();jump();}
-});
-document.addEventListener('keyup',e=>input.keys[e.code]=false);
-
-if(isMobile){
-document.getElementById('interactBtn').addEventListener('touchstart',e=>{
-e.preventDefault();
-if(state.nearInteract)state.nearInteract.action();
-});
-document.getElementById('jumpBtn').addEventListener('touchstart',e=>{
-e.preventDefault();
-jump();
-});
-setupMobile();
-}else{
-document.addEventListener('click',()=>!input.locked&&renderer.domElement.requestPointerLock());
-document.addEventListener('pointerlockchange',()=>input.locked=document.pointerLockElement===renderer.domElement);
-document.addEventListener('mousemove',e=>{
-if(input.locked){
-input.mouse.x+=e.movementX*settings.lookSpeed;
-input.mouse.y-=e.movementY*settings.lookSpeed;
-input.mouse.y=Math.max(-Math.PI/2,Math.min(Math.PI/2,input.mouse.y));
-}
-});
-}
-}
-
-function setupMobile(){
-const joystick=document.getElementById('joystick');
-const knob=document.getElementById('joystickKnob');
-let joyId=null;
-
-document.addEventListener('touchstart',e=>e.preventDefault(),{passive:false});
-document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
-
-joystick.addEventListener('touchstart',e=>{
-if(!joyId){joyId=e.changedTouches[0].identifier;input.touch.joystick.active=true;}
-});
-
-document.addEventListener('touchmove',e=>{
-for(let touch of e.changedTouches){
-if(touch.identifier===joyId){
-const rect=joystick.getBoundingClientRect();
-const centerX=rect.left+rect.width/2;
-const centerY=rect.top+rect.height/2;
-const maxDist=rect.width*0.35;
-
-let deltaX=touch.clientX-centerX;
-let deltaY=touch.clientY-centerY;
-const dist=Math.sqrt(deltaX**2+deltaY**2);
-
-if(dist>maxDist){
-deltaX=(deltaX/dist)*maxDist;
-deltaY=(deltaY/dist)*maxDist;
-}
-
-input.touch.joystick.x=deltaX/maxDist;
-input.touch.joystick.y=deltaY/maxDist;
-knob.style.transform=`translate(calc(-50% + ${deltaX}px), calc(-50% + ${deltaY}px))`;
-}else{
-const key=`look_${touch.identifier}`;
-if(input.touch[key]){
-input.mouse.x-=(touch.clientX-input.touch[key].lastX)*settings.lookSpeed*2;
-input.mouse.y-=(touch.clientY-input.touch[key].lastY)*settings.lookSpeed*2;
-input.mouse.y=Math.max(-Math.PI/2,Math.min(Math.PI/2,input.mouse.y));
-input.touch[key]={lastX:touch.clientX,lastY:touch.clientY};
-}
-}
-}
-});
-
-document.addEventListener('touchstart',e=>{
-for(let touch of e.changedTouches){
-if(touch.identifier!==joyId){
-input.touch[`look_${touch.identifier}`]={lastX:touch.clientX,lastY:touch.clientY};
-}
-}
-});
-
-document.addEventListener('touchend',e=>{
-for(let touch of e.changedTouches){
-if(touch.identifier===joyId){
-joyId=null;
-input.touch.joystick.active=false;
-input.touch.joystick.x=0;
-input.touch.joystick.y=0;
-knob.style.transform='translate(-50%, -50%)';
-}else{
-delete input.touch[`look_${touch.identifier}`];
-}
-}
-});
-}
-
-function updatePlayer(){
-const dir=new THREE.Vector3();
-
-if(input.keys['KeyW'])dir.z-=1;
-if(input.keys['KeyS'])dir.z+=1;
-if(input.keys['KeyA'])dir.x-=1;
-if(input.keys['KeyD'])dir.x+=1;
-
-if(input.touch.joystick.active){
-dir.x+=input.touch.joystick.x;
-dir.z+=input.touch.joystick.y;
-}
-
-if(dir.length()>0){
-dir.normalize().multiplyScalar(settings.moveSpeed);
-dir.applyQuaternion(player.quaternion);
-const newPos=player.position.clone().add(dir);
-if(!checkCollision(newPos))player.position.copy(newPos);
-}
-
-// Physics
-state.velocity.y+=settings.gravity;
-const newY=player.position.y+state.velocity.y;
-
-if(newY<=2){
-player.position.y=2;
-state.velocity.y=0;
-state.isGrounded=true;
-}else{
-player.position.y=newY;
-state.isGrounded=false;
-}
-
-player.rotation.y=input.mouse.x;
-camera.rotation.x=input.mouse.y;
-}
-
-function animateWorld(){
-for(let [key,chunk] of world.chunks.entries()){
-chunk.children.forEach(child=>{
-if(child.userData&&child.userData.rotSpeed){
-child.rotation.y+=child.userData.rotSpeed;
-child.position.y=child.userData.baseY+Math.sin(Date.now()*child.userData.floatSpeed)*0.3;
-}
-});
-}
-}
-
-function gameLoop(){
-requestAnimationFrame(gameLoop);
-updatePlayer();
-updateWorld();
-checkInteractions();
-animateWorld();
-renderer.render(scene,camera);
-}
-// Made By Sv. Aadarsh Aaryan
-        </script>
-    <!-- Credit Section -->
-<div style="position:fixed; top:10px; right:10px; 
-  background:rgba(0,0,0,0.5); 
-  padding:8px; 
-  border-radius:8px; 
-  color:white; 
-  font-size:14px; 
-  text-align:right; 
-  aspect-ratio:3/1; 
-  width:300px; 
-  display:flex; 
-  flex-direction:column; 
-  justify-content:center;">
-  This game is created by <b>Sv. Aadarsh Aaryan</b><br>
-  <a href="https://www.instagram.com/aadarshaaryan.official/" target="_blank" style="color:#FFD700; text-decoration:none;">Instagram</a>
-     <nav>
-    <a href="more.html" style="color:#39FF14;">More</a>
-</nav>
-
-</div>
-<h1>My Homepage</h1>
-<button id="more-button">More</button>
-
-<script>
-document.getElementById('more-button').addEventListener('click', function() {
-  alert('Let's know more about Sv. Aadarsh Aaryan 🤩');
-});
-</script>  
-</script>
 </body>
 </html>
