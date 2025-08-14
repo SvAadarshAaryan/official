@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>Page Titles</title>
-    <link rel="stylesheet" href="style.css">
     <style>
         body {
             text-align: center;
@@ -15,19 +14,16 @@
             animation: gradientBG 12s ease infinite;
         }
 
-        /* Animated background gradient */
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        /* Container at top */
         .content {
-            padding-top: 40px; /* space from top */
+            padding-top: 40px;
         }
 
-        /* Heading container with slide animation */
         .centered-heading {
             margin-bottom: 10px;
             opacity: 0;
@@ -35,26 +31,21 @@
             animation: slideDown 1s ease forwards;
         }
 
-        /* Main name */
         .main-name {
             font-size: 2.5em;
             margin-bottom: 0;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
         }
 
-        /* Subtitle */
         .subtitle {
             display: inline-block;
             white-space: nowrap;
             overflow: hidden;
             border-right: 0.15em solid;
             font-size: 1.3em;
-            animation: blink-caret 0.75s step-end infinite;
-            transition: color 0.8s ease, border-right-color 0.8s ease;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
 
-        /* Image with fade + zoom */
         .profile-img {
             width: 200px;
             max-width: 90%;
@@ -68,26 +59,17 @@
             box-shadow: 0 8px 15px rgba(0,0,0,0.2);
         }
 
-        /* Slide down animation */
         @keyframes slideDown {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Fade + zoom animation */
         @keyframes fadeZoomIn {
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* Cursor blink */
         @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: inherit; }
+            0%, 100% { border-color: transparent; }
+            50% { border-color: currentColor; }
         }
     </style>
 </head>
@@ -108,50 +90,40 @@
             { text: "Web/App Creator", color: "purple" }
         ];
 
+        const subtitleEl = document.getElementById("subtitle");
         let index = 0;
         let charIndex = 0;
         let isDeleting = false;
-        const subtitleElement = document.getElementById("subtitle");
-
-        subtitleElement.textContent = subtitles[0].text;
-        subtitleElement.style.color = subtitles[0].color;
-        subtitleElement.style.borderRightColor = subtitles[0].color;
-
-        setTimeout(() => {
-            index = 1;
-            charIndex = 0;
-            isDeleting = false;
-            typeEffect();
-        }, 1500);
 
         function typeEffect() {
             const current = subtitles[index];
-            const currentText = current.text;
-
-            subtitleElement.style.color = current.color;
-            subtitleElement.style.borderRightColor = current.color;
+            subtitleEl.style.color = current.color;
+            subtitleEl.style.borderRightColor = current.color;
 
             if (!isDeleting) {
-                subtitleElement.textContent = currentText.substring(0, charIndex + 1);
+                subtitleEl.textContent = current.text.substring(0, charIndex + 1);
                 charIndex++;
-
-                if (charIndex === currentText.length) {
+                if (charIndex === current.text.length) {
                     isDeleting = true;
-                    setTimeout(typeEffect, 1000);
+                    setTimeout(typeEffect, 1000); // Pause at full text
                     return;
                 }
             } else {
-                subtitleElement.textContent = currentText.substring(0, charIndex - 1);
+                subtitleEl.textContent = current.text.substring(0, charIndex - 1);
                 charIndex--;
-
                 if (charIndex === 0) {
                     isDeleting = false;
                     index = (index + 1) % subtitles.length;
                 }
             }
 
-            setTimeout(typeEffect, isDeleting ? 80 : 100);
+            setTimeout(typeEffect, isDeleting ? 60 : 100);
         }
+
+        // Start after a short delay
+        setTimeout(() => typeEffect(), 500);
+        // Start blinking caret immediately
+        subtitleEl.style.animation = "blink-caret 0.75s step-end infinite";
     </script>
 </body>
 </html>
