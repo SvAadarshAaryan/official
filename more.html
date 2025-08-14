@@ -1,37 +1,36 @@
-/* Center the heading */
-.centered-heading {
-    text-align: center;
-    font-family: monospace; /* A monospaced font looks better for a typewriter effect */
-    font-size: 2em;
-    white-space: nowrap; /* Prevents text from wrapping */
-    overflow: hidden; /* Hides the text until it's "typed" */
-    border-right: 0.15em solid orange; /* The blinking cursor */
-    animation: 
-        typing 3.5s steps(30, end),
-        blink-caret 0.75s step-end infinite;
-}
-
-/* Keyframes for the typing animation */
-@keyframes typing {
-    from { width: 0 }
-    to { width: 100% }
-}
-
-/* Keyframes for the blinking cursor */
-@keyframes blink-caret {
-    from, to { border-color: transparent }
-    50% { border-color: orange; }
-}
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Page Title</title>
+    <title>Page Titles</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Center the heading */
+        .centered-heading {
+            text-align: center;
+            font-family: monospace; /* A monospaced font looks better for a typewriter effect */
+            white-space: nowrap; /* Prevents text from wrapping */
+            overflow: hidden; /* Hidden text until typing */
+            border-right: 0.15em solid orange; /* The blinking cursor */
+            animation:
+                typing 3.5s steps(30, end),
+                blink-caret 0.75s step-end infinite;
+        }
+
+        /* Keyframes for the typing animation */
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        /* Keyframes for the blinking cursor */
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: orange }
+        }
+    </style>
 </head>
 <body>
-    <h1 class="centered-heading">
-        <span>Sv. Aadarsh Aaryan</span>
-    </h1>
-    <img src="1mipcz.jpg"alt="Sv. Aadarsh Aaryan (brand image 😎) ">
+    <h1 class="centered-heading"><span>Sv. Aadhaar Aaryan</span></h1>
+   <img src="1mipcz.jpg"alt="Sv. Aadarsh Aaryan (brand image 😎) ">
 </body>
 </html>
