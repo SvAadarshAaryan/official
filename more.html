@@ -9,7 +9,7 @@
             font-family: monospace;
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh;
             background: linear-gradient(-45deg, #ffecd2, #fcb69f, #a1c4fd, #c2e9fb);
             background-size: 400% 400%;
             animation: gradientBG 12s ease infinite;
@@ -22,11 +22,16 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* Container at top */
+        .content {
+            padding-top: 40px; /* space from top */
+        }
+
         /* Heading container with slide animation */
         .centered-heading {
             margin-bottom: 10px;
             opacity: 0;
-            transform: translateY(-30px);
+            transform: translateY(-20px);
             animation: slideDown 1s ease forwards;
         }
 
@@ -37,7 +42,7 @@
             text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
         }
 
-        /* Subtitle with smooth color fade */
+        /* Subtitle */
         .subtitle {
             display: inline-block;
             white-space: nowrap;
@@ -63,7 +68,7 @@
             box-shadow: 0 8px 15px rgba(0,0,0,0.2);
         }
 
-        /* Slide down animation for heading */
+        /* Slide down animation */
         @keyframes slideDown {
             to {
                 opacity: 1;
@@ -71,7 +76,7 @@
             }
         }
 
-        /* Fade + zoom animation for image */
+        /* Fade + zoom animation */
         @keyframes fadeZoomIn {
             to {
                 opacity: 1;
@@ -87,12 +92,13 @@
     </style>
 </head>
 <body>
-    <div class="centered-heading">
-        <h1 class="main-name">Sv. Aadarsh Aaryan</h1>
-        <h2 class="subtitle" id="subtitle"></h2>
+    <div class="content">
+        <div class="centered-heading">
+            <h1 class="main-name">Sv. Aadarsh Aaryan</h1>
+            <h2 class="subtitle" id="subtitle"></h2>
+        </div>
+        <img src="1mipcz.jpg" alt="Sv. Aadarsh Aaryan (brand image 😎)" class="profile-img">
     </div>
-
-    <img src="1mipcz.jpg" alt="Sv. Aadarsh Aaryan (brand image 😎)" class="profile-img">
 
     <script>
         const subtitles = [
