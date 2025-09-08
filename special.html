@@ -93,23 +93,34 @@
 
     async function translateText(text) {
       log("Translating... please wait");
-      try {
-        const res = await fetch("https://libretranslate.de/translate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            q: text,
-            source: "en",
-            target: "hi",
-            format: "text"
-          })
-        });
-        const data = await res.json();
-        return data.translatedText || "⚠️ Translation failed.";
-      } catch (err) {
-        log("❌ Translation error: " + err.message);
-        return "Error translating.";
+      const servers = [
+        "https://translate.astian.org/translate",
+        "https://libretranslate.com/translate",
+        "https://libretranslate.de/translate"
+      ];
+      for (let url of servers) {
+        try {
+          log("Trying server: " + url);
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              q: text,
+              source: "en",
+              target: "hi",
+              format: "text"
+            })
+          });
+          const data = await res.json();
+          if (data.translatedText) {
+            log("✅ Translation successful with " + url);
+            return data.translatedText;
+          }
+        } catch (err) {
+          log("❌ Failed on " + url + " : " + err.message);
+        }
       }
+      return "⚠️ All translation servers failed.";
     }
 
     async function createPDF(text) {
@@ -136,8 +147,12 @@
       translatedText = await translateText(text);
       outputBox.innerText = translatedText;
 
-      downloadBtn.disabled = false;
-      log("✅ Translation complete");
+      if (!translatedText.startsWith("⚠️")) {
+        downloadBtn.disabled = false;
+        log("✅ Translation complete");
+      } else {
+        log("❌ Could not translate.");
+      }
     });
 
     downloadBtn.addEventListener("click", () => {
