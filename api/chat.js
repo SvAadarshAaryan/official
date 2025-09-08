@@ -1,4 +1,3 @@
-// api/chat.js
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -11,6 +10,28 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Build messages array
+    let messages = [
+      { role: "system", content: "You are Aadarsh AI, a helpful chatbot created by Aadarsh Aaryan. Be friendly and clear." }
+    ];
+
+    // If text included
+    if (message) {
+      messages.push({ role: "user", content: message });
+    }
+
+    // If image included
+    if (image) {
+      messages.push({
+        role: "user",
+        content: [
+          { type: "text", text: message || "Please analyze this image." },
+          { type: "image_url", image_url: { url: image } }
+        ]
+      });
+    }
+
+    // Call OpenAI API
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -18,15 +39,8 @@ export default async function handler(req, res) {
         "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",  // ✅ Fast + cheap
-        messages: [
-          {
-            role: "system",
-            content: "You are Aadarsh AI, a helpful assistant created by Aadarsh Aaryan. " +
-                     "Always be friendly, respectful, and acknowledge that you were created by Aadarsh Aaryan when asked."
-          },
-          { role: "user", content: message || "" }
-        ]
+        model: image ? "gpt-4o-mini" : "gpt-4o-mini", // same model, supports vision
+        messages
       })
     });
 
