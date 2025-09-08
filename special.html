@@ -91,36 +91,37 @@
       return text;
     }
 
+    // ✅ Translation with proxy (bypasses CORS on GitHub Pages)
     async function translateText(text) {
       log("Translating... please wait");
-      const servers = [
-        "https://translate.astian.org/translate",
-        "https://libretranslate.com/translate",
-        "https://libretranslate.de/translate"
-      ];
-      for (let url of servers) {
-        try {
-          log("Trying server: " + url);
-          const res = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              q: text,
-              source: "en",
-              target: "hi",
-              format: "text"
-            })
-          });
-          const data = await res.json();
-          if (data.translatedText) {
-            log("✅ Translation successful with " + url);
-            return data.translatedText;
-          }
-        } catch (err) {
-          log("❌ Failed on " + url + " : " + err.message);
+
+      const apiUrl = "https://libretranslate.de/translate";
+      const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(apiUrl);
+
+      try {
+        const res = await fetch(proxyUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            q: text,
+            source: "en",
+            target: "hi",
+            format: "text"
+          })
+        });
+
+        const data = await res.json();
+        if (data.translatedText) {
+          log("✅ Translation successful via proxy");
+          return data.translatedText;
+        } else {
+          log("⚠️ Proxy returned no translation");
+          return "Translation failed.";
         }
+      } catch (err) {
+        log("❌ Proxy error: " + err.message);
+        return "Error translating.";
       }
-      return "⚠️ All translation servers failed.";
     }
 
     async function createPDF(text) {
@@ -147,7 +148,7 @@
       translatedText = await translateText(text);
       outputBox.innerText = translatedText;
 
-      if (!translatedText.startsWith("⚠️")) {
+      if (!translatedText.startsWith("⚠️") && !translatedText.startsWith("Error")) {
         downloadBtn.disabled = false;
         log("✅ Translation complete");
       } else {
