@@ -1,12 +1,13 @@
+// api/chat.js
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { message } = req.body;
+  const { message, image } = req.body;
 
-  if (!message) {
-    return res.status(400).json({ error: "Message is required" });
+  if (!message && !image) {
+    return res.status(400).json({ error: "Message or image is required" });
   }
 
   try {
@@ -17,10 +18,14 @@ export default async function handler(req, res) {
         "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",   // ✅ Cheap + fast model, good for chat
+        model: "gpt-4o-mini",  // ✅ Fast + cheap
         messages: [
-          { role: "system", content: "You are a helpful AI chatbot." },
-          { role: "user", content: message }
+          {
+            role: "system",
+            content: "You are Aadarsh AI, a helpful assistant created by Aadarsh Aaryan. " +
+                     "Always be friendly, respectful, and acknowledge that you were created by Aadarsh Aaryan when asked."
+          },
+          { role: "user", content: message || "" }
         ]
       })
     });
